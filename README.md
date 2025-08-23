@@ -1,5 +1,5 @@
 Fish Feed Processing Calculator
-ENT 302 | Year: 2025
+ENT 302 | Year: 2025gi
 A comprehensive web-based calculator for fish feed formulation using the Pearson Square method. Designed for aquaculture students and professionals to calculate optimal feed compositions with precise ingredient ratios and cost analysis.
 Live Demo
 Try the Calculator
