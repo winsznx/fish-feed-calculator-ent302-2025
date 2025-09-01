@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fish Feed Processing Calculator - ENT 302</title>
+    <title>Fish Feed Software Development Calculator</title>
     <style>
         * {
             margin: 0;
@@ -48,25 +48,74 @@
             min-height: 100vh;
         }
 
-        .header {
+        /* Landing Page Styles */
+        .landing-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             text-align: center;
-            margin-bottom: 2rem;
             padding: 2rem;
+        }
+
+        .landing-header {
             background: linear-gradient(135deg, var(--primary-color), #3b82f6);
             color: white;
-            border-radius: 12px;
+            border-radius: 20px;
+            padding: 3rem 2rem;
             box-shadow: var(--shadow);
+            max-width: 800px;
+            margin-bottom: 2rem;
         }
 
-        .header h1 {
+        .landing-title {
             font-size: 2.5rem;
-            margin-bottom: 0.5rem;
             font-weight: 700;
+            margin-bottom: 2rem;
+            line-height: 1.2;
         }
 
-        .header p {
+        .contributors {
+            font-size: 1.3rem;
+            font-weight: 600;
             opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .contributors-names {
             font-size: 1.1rem;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        .start-button {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            margin-top: 1rem;
+        }
+
+        .start-button:hover {
+            background: #059669;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Calculator Page Styles */
+        .calculator-page {
+            display: none;
+        }
+
+        .calculator-page.active {
+            display: block;
         }
 
         .theme-toggle {
@@ -429,11 +478,15 @@
                 padding: 10px;
             }
 
-            .header h1 {
+            .landing-title {
                 font-size: 1.8rem;
             }
 
-            .header p {
+            .contributors {
+                font-size: 1.1rem;
+            }
+
+            .contributors-names {
                 font-size: 1rem;
             }
 
@@ -497,7 +550,7 @@
         }
 
         @media (max-width: 480px) {
-            .header h1 {
+            .landing-title {
                 font-size: 1.5rem;
             }
 
@@ -522,280 +575,288 @@
         <span id="themeText">Dark</span>
     </div>
     
-    <div class="container">
-        <div class="header">
-            <h1>Fish Feed Processing Calculator</h1>
-            <p>ENT 302 | Year: 2025</p>
+    <!-- Landing Page -->
+    <div class="landing-page" id="landingPage">
+        <div class="landing-header">
+            <h1 class="landing-title">Fish Feed Software Development to Calculate the CP, Weight (Quantity) and Cost of Production</h1>
+            <div class="contributors">by</div>
+            <div class="contributors-names">Morakinyo O.S, Timothy O.P</div>
         </div>
+        <button class="start-button" onclick="startCalculator()">Start Calculator</button>
+    </div>
 
-        <div class="wizard-container">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
+    <!-- Calculator Page -->
+    <div class="calculator-page" id="calculatorPage">
+        <div class="container">
+            <div class="wizard-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
 
-            <!-- Step 1: Ingredients Input -->
-            <div class="step active" id="step1">
-                <h2 class="step-title">Step 1: Enter Ingredient Information</h2>
-                
-                <!-- Protein Sources -->
-                <div class="ingredient-group">
-                    <div class="group-header" onclick="toggleProteinSources()">
-                        <span>Protein Sources</span>
-                        <span id="proteinToggleIcon">▼</span>
+                <!-- Step 1: Ingredients Input -->
+                <div class="step active" id="step1">
+                    <h2 class="step-title">Step 1: Enter Ingredient Information</h2>
+                    
+                    <!-- Protein Sources -->
+                    <div class="ingredient-group">
+                        <div class="group-header" onclick="toggleProteinSources()">
+                            <span>Protein Sources</span>
+                            <span id="proteinToggleIcon">▼</span>
+                        </div>
+                        <div class="group-content toggle-content open" id="proteinSourcesDetails">
+                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                <input type="checkbox" class="checkbox" id="fm_check">
+                                <label for="fm_check">Fish Meal (FM)</label>
+                                <input type="number" class="input-field" id="fm_protein" placeholder="Protein %">
+                                <input type="number" class="input-field" id="fm_cost" placeholder="Cost/kg (₦)" step="0.01">
+                            </div>
+                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                <input type="checkbox" class="checkbox" id="sbm_check">
+                                <label for="sbm_check">Soya Bean Meal (SBM)</label>
+                                <input type="number" class="input-field" id="sbm_protein" placeholder="Protein %">
+                                <input type="number" class="input-field" id="sbm_cost" placeholder="Cost/kg (₦)" step="0.01">
+                            </div>
+                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                <input type="checkbox" class="checkbox" id="gnc_check">
+                                <label for="gnc_check">Groundnut Cake (GNC)</label>
+                                <input type="number" class="input-field" id="gnc_protein" placeholder="Protein %">
+                                <input type="number" class="input-field" id="gnc_cost" placeholder="Cost/kg (₦)" step="0.01">
+                            </div>
+                            <div id="customProteinContainer"></div>
+                            <button type="button" class="add-ingredient-btn" onclick="addCustomIngredient('protein')">
+                                + Add Custom Protein Source
+                            </button>
+                        </div>
                     </div>
-                    <div class="group-content toggle-content open" id="proteinSourcesDetails">
-                        <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                            <input type="checkbox" class="checkbox" id="fm_check">
-                            <label for="fm_check">Fish Meal (FM)</label>
-                            <input type="number" class="input-field" id="fm_protein" placeholder="Protein %">
-                            <input type="number" class="input-field" id="fm_cost" placeholder="Cost/kg (₦)" step="0.01">
+
+                    <!-- Energy Sources -->
+                    <div class="ingredient-group">
+                        <div class="group-header" onclick="toggleEnergySources()">
+                            <span>Energy Sources</span>
+                            <span id="energyToggleIcon">▼</span>
                         </div>
-                        <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                            <input type="checkbox" class="checkbox" id="sbm_check">
-                            <label for="sbm_check">Soya Bean Meal (SBM)</label>
-                            <input type="number" class="input-field" id="sbm_protein" placeholder="Protein %">
-                            <input type="number" class="input-field" id="sbm_cost" placeholder="Cost/kg (₦)" step="0.01">
+                        <div class="group-content toggle-content open" id="energySourcesDetails">
+                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                <input type="checkbox" class="checkbox" id="ym_check">
+                                <label for="ym_check">Yellow Maize (YM)</label>
+                                <input type="number" class="input-field" id="ym_protein" placeholder="Protein %">
+                                <input type="number" class="input-field" id="ym_cost" placeholder="Cost/kg (₦)" step="0.01">
+                            </div>
+                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                <input type="checkbox" class="checkbox" id="wb_check">
+                                <label for="wb_check">Wheat Bran (WB)</label>
+                                <input type="number" class="input-field" id="wb_protein" placeholder="Protein %">
+                                <input type="number" class="input-field" id="wb_cost" placeholder="Cost/kg (₦)" step="0.01">
+                            </div>
+                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                <input type="checkbox" class="checkbox" id="pkc_check">
+                                <label for="pkc_check">Palm Kernel Cake (PKC)</label>
+                                <input type="number" class="input-field" id="pkc_protein" placeholder="Protein %">
+                                <input type="number" class="input-field" id="pkc_cost" placeholder="Cost/kg (₦)" step="0.01">
+                            </div>
+                            <div id="customEnergyContainer"></div>
+                            <button type="button" class="add-ingredient-btn" onclick="addCustomIngredient('energy')">
+                                + Add Custom Energy Source
+                            </button>
                         </div>
-                        <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                            <input type="checkbox" class="checkbox" id="gnc_check">
-                            <label for="gnc_check">Groundnut Cake (GNC)</label>
-                            <input type="number" class="input-field" id="gnc_protein" placeholder="Protein %">
-                            <input type="number" class="input-field" id="gnc_cost" placeholder="Cost/kg (₦)" step="0.01">
-                        </div>
-                        <div id="customProteinContainer"></div>
-                        <button type="button" class="add-ingredient-btn" onclick="addCustomIngredient('protein')">
-                            + Add Custom Protein Source
-                        </button>
+                    </div>
+
+                    <div class="button-group">
+                        <div></div>
+                        <button class="btn btn-primary" onclick="nextStep()">Next Step →</button>
                     </div>
                 </div>
 
-                <!-- Energy Sources -->
-                <div class="ingredient-group">
-                    <div class="group-header" onclick="toggleEnergySources()">
-                        <span>Energy Sources</span>
-                        <span id="energyToggleIcon">▼</span>
-                    </div>
-                    <div class="group-content toggle-content open" id="energySourcesDetails">
-                        <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                            <input type="checkbox" class="checkbox" id="ym_check">
-                            <label for="ym_check">Yellow Maize (YM)</label>
-                            <input type="number" class="input-field" id="ym_protein" placeholder="Protein %">
-                            <input type="number" class="input-field" id="ym_cost" placeholder="Cost/kg (₦)" step="0.01">
+                <!-- Step 2: Fixed Ingredients -->
+                <div class="step" id="step2">
+                    <h2 class="step-title">Step 2: Fixed Ingredients</h2>
+                    
+                    <div class="ingredient-group">
+                        <div class="group-header" onclick="toggleFixedIngredients()">
+                            <span>Fixed Ingredients (Total %)</span>
+                            <span id="toggleIcon">▼</span>
                         </div>
-                        <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                            <input type="checkbox" class="checkbox" id="wb_check">
-                            <label for="wb_check">Wheat Bran (WB)</label>
-                            <input type="number" class="input-field" id="wb_protein" placeholder="Protein %">
-                            <input type="number" class="input-field" id="wb_cost" placeholder="Cost/kg (₦)" step="0.01">
-                        </div>
-                        <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                            <input type="checkbox" class="checkbox" id="pkc_check">
-                            <label for="pkc_check">Palm Kernel Cake (PKC)</label>
-                            <input type="number" class="input-field" id="pkc_protein" placeholder="Protein %">
-                            <input type="number" class="input-field" id="pkc_cost" placeholder="Cost/kg (₦)" step="0.01">
-                        </div>
-                        <div id="customEnergyContainer"></div>
-                        <button type="button" class="add-ingredient-btn" onclick="addCustomIngredient('energy')">
-                            + Add Custom Energy Source
-                        </button>
-                    </div>
-                </div>
-
-                <div class="button-group">
-                    <div></div>
-                    <button class="btn btn-primary" onclick="nextStep()">Next Step →</button>
-                </div>
-            </div>
-
-            <!-- Step 2: Fixed Ingredients -->
-            <div class="step" id="step2">
-                <h2 class="step-title">Step 2: Fixed Ingredients</h2>
-                
-                <div class="ingredient-group">
-                    <div class="group-header" onclick="toggleFixedIngredients()">
-                        <span>Fixed Ingredients (Total %)</span>
-                        <span id="toggleIcon">▼</span>
-                    </div>
-                    <div class="group-content">
-                        <div class="ingredient-row">
-                            <span></span>
-                            <label>Total Fixed Ingredients %</label>
-                            <input type="number" class="input-field" id="total_fi" placeholder="Total %" max="100">
-                            <span></span>
-                        </div>
-                        
-                        <div class="toggle-content open" id="fixedIngredientsDetails">
-                            
-                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                <input type="checkbox" class="checkbox" id="fi_premix_check">
-                                <label><strong>🐟 Fish Premix (%)</strong></label>
-                                <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
-                                <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
+                        <div class="group-content">
+                            <div class="ingredient-row">
+                                <span></span>
+                                <label>Total Fixed Ingredients %</label>
+                                <input type="number" class="input-field" id="total_fi" placeholder="Total %" max="100">
+                                <span></span>
                             </div>
                             
-                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                <input type="checkbox" class="checkbox" id="fi_methionine_check">
-                                <label><strong>🧪 Methionine (%)</strong></label>
-                                <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
-                                <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
-                            </div>
-                            
-                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                <input type="checkbox" class="checkbox" id="fi_lysine_check">
-                                <label><strong>🧪 Lysine (%)</strong></label>
-                                <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
-                                <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
-                            </div>
-                            
-                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                <input type="checkbox" class="checkbox" id="fi_binder_check">
-                                <label><strong>🔗 Binder (%)</strong></label>
-                                <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
-                                <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
-                            </div>
-                            
-                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                <input type="checkbox" class="checkbox" id="fi_oil_check">
-                                <label><strong>🫒 Vegetable Oil (%)</strong></label>
-                                <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
-                                <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
-                            </div>
-                            
-                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                <input type="checkbox" class="checkbox" id="fi_salt_check">
-                                <label><strong>🧂 Salt (%)</strong></label>
-                                <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
-                                <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
-                            </div>
-                            
-                            <!-- Custom Fixed Ingredients Section -->
-                            <div class="custom-ingredients-section">
-                                <div class="custom-ingredients-header">
-                                    <span>🔧</span>
-                                    <span>Custom Fixed Ingredients</span>
+                            <div class="toggle-content open" id="fixedIngredientsDetails">
+                                
+                                <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                    <input type="checkbox" class="checkbox" id="fi_premix_check">
+                                    <label><strong>🟡 Fish Premix (%)</strong></label>
+                                    <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
+                                    <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
                                 </div>
-                                <div id="customFixedContainer" class="custom-ingredients-container">
-                                    <div class="custom-ingredients-placeholder">Custom ingredients will appear here...</div>
+                                
+                                <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                    <input type="checkbox" class="checkbox" id="fi_methionine_check">
+                                    <label><strong>🧪 Methionine (%)</strong></label>
+                                    <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
+                                    <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
                                 </div>
-                                <button type="button" class="add-ingredient-btn" onclick="addCustomIngredient('fixed')">
-                                    + Add Custom Fixed Ingredient
-                                </button>
+                                
+                                <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                    <input type="checkbox" class="checkbox" id="fi_lysine_check">
+                                    <label><strong>🧪 Lysine (%)</strong></label>
+                                    <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
+                                    <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
+                                </div>
+                                
+                                <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                    <input type="checkbox" class="checkbox" id="fi_binder_check">
+                                    <label><strong>🔗 Binder (%)</strong></label>
+                                    <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
+                                    <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
+                                </div>
+                                
+                                <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                    <input type="checkbox" class="checkbox" id="fi_oil_check">
+                                    <label><strong>🫒 Vegetable Oil (%)</strong></label>
+                                    <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
+                                    <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
+                                </div>
+                                
+                                <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                    <input type="checkbox" class="checkbox" id="fi_salt_check">
+                                    <label><strong>🧂 Salt (%)</strong></label>
+                                    <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
+                                    <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
+                                </div>
+                                
+                                <!-- Custom Fixed Ingredients Section -->
+                                <div class="custom-ingredients-section">
+                                    <div class="custom-ingredients-header">
+                                        <span>🔧</span>
+                                        <span>Custom Fixed Ingredients</span>
+                                    </div>
+                                    <div id="customFixedContainer" class="custom-ingredients-container">
+                                        <div class="custom-ingredients-placeholder">Custom ingredients will appear here...</div>
+                                    </div>
+                                    <button type="button" class="add-ingredient-btn" onclick="addCustomIngredient('fixed')">
+                                        + Add Custom Fixed Ingredient
+                                    </button>
+                                </div>
+                                
+                                <div class="success-message" id="fiValidation" style="margin-top: 15px;"></div>
+                                
                             </div>
-                            
-                            <div class="success-message" id="fiValidation" style="margin-top: 15px;"></div>
-                            
                         </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
+                        <button class="btn btn-primary" onclick="nextStep()">Next Step →</button>
                     </div>
                 </div>
 
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
-                    <button class="btn btn-primary" onclick="nextStep()">Next Step →</button>
-                </div>
-            </div>
-
-            <!-- Step 3: Feed Requirements -->
-            <div class="step" id="step3">
-                <h2 class="step-title">Step 3: Feed Requirements</h2>
-                
-                <div class="ingredient-group">
-                    <div class="group-header">
-                        <span>Feed Specifications</span>
-                        <span>🎯</span>
-                    </div>
-                    <div class="group-content">
-                        <div class="ingredient-row">
-                            <span></span>
-                            <label>Required Crude Protein (CP) %</label>
-                            <input type="number" class="input-field" id="required_cp" placeholder="Required CP %" step="0.1">
-                            <span></span>
+                <!-- Step 3: Feed Requirements -->
+                <div class="step" id="step3">
+                    <h2 class="step-title">Step 3: Feed Requirements</h2>
+                    
+                    <div class="ingredient-group">
+                        <div class="group-header">
+                            <span>Feed Specifications</span>
+                            <span>🎯</span>
                         </div>
-                        <div class="ingredient-row">
-                            <span></span>
-                            <label>Total Feed Weight (kg)</label>
-                            <input type="number" class="input-field" id="total_weight" placeholder="Total weight" step="0.1">
-                            <span></span>
+                        <div class="group-content">
+                            <div class="ingredient-row">
+                                <span></span>
+                                <label>Required Crude Protein (CP) %</label>
+                                <input type="number" class="input-field" id="required_cp" placeholder="Required CP %" step="0.1">
+                                <span></span>
+                            </div>
+                            <div class="ingredient-row">
+                                <span></span>
+                                <label>Total Feed Weight (kg)</label>
+                                <input type="number" class="input-field" id="total_weight" placeholder="Total weight" step="0.1">
+                                <span></span>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
+                        <button class="btn btn-primary" onclick="calculateFeed()">Calculate Feed →</button>
+                    </div>
                 </div>
 
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
-                    <button class="btn btn-primary" onclick="calculateFeed()">Calculate Feed →</button>
-                </div>
-            </div>
+                <!-- Step 4: Calculations -->
+                <div class="step" id="step4">
+                    <h2 class="step-title">Step 4: Pearson Square Calculation</h2>
+                    
+                    <div class="calculation-steps">
+                        <h3>Mean Protein Source: <span id="meanProtein"></span>%</h3>
+                        <h3>Mean Energy Source: <span id="meanEnergy"></span>%</h3>
+                    </div>
 
-            <!-- Step 4: Calculations -->
-            <div class="step" id="step4">
-                <h2 class="step-title">Step 4: Pearson Square Calculation</h2>
-                
-                <div class="calculation-steps">
-                    <h3>Mean Protein Source: <span id="meanProtein"></span>%</h3>
-                    <h3>Mean Energy Source: <span id="meanEnergy"></span>%</h3>
-                </div>
+                    <div class="pearson-square">
+                        <div class="pearson-cell" id="proteinSource"></div>
+                        <div class="pearson-cell"></div>
+                        <div class="pearson-cell" id="proteinDiff"></div>
+                        <div class="pearson-cell"></div>
+                        <div class="pearson-cell pearson-center" id="requiredCP"></div>
+                        <div class="pearson-cell"></div>
+                        <div class="pearson-cell" id="energyDiff"></div>
+                        <div class="pearson-cell"></div>
+                        <div class="pearson-cell" id="energySource"></div>
+                    </div>
 
-                <div class="pearson-square">
-                    <div class="pearson-cell" id="proteinSource"></div>
-                    <div class="pearson-cell"></div>
-                    <div class="pearson-cell" id="proteinDiff"></div>
-                    <div class="pearson-cell"></div>
-                    <div class="pearson-cell pearson-center" id="requiredCP"></div>
-                    <div class="pearson-cell"></div>
-                    <div class="pearson-cell" id="energyDiff"></div>
-                    <div class="pearson-cell"></div>
-                    <div class="pearson-cell" id="energySource"></div>
-                </div>
+                    <div class="calculation-steps">
+                        <h3>Calculation Results:</h3>
+                        <p>Remaining % after Fixed Ingredients: <span id="remainingPercent"></span>%</p>
+                        <p>Protein Source %: <span id="proteinPercent"></span>%</p>
+                        <p>Energy Source %: <span id="energyPercent"></span>%</p>
+                    </div>
 
-                <div class="calculation-steps">
-                    <h3>Calculation Results:</h3>
-                    <p>Remaining % after Fixed Ingredients: <span id="remainingPercent"></span>%</p>
-                    <p>Protein Source %: <span id="proteinPercent"></span>%</p>
-                    <p>Energy Source %: <span id="energyPercent"></span>%</p>
-                </div>
-
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
-                    <button class="btn btn-primary" onclick="nextStep()">View Results →</button>
-                </div>
-            </div>
-
-            <!-- Step 5: Results -->
-            <div class="step" id="step5">
-                <h2 class="step-title">Step 5: Final Results</h2>
-                
-                <div class="unit-toggle">
-                    <label>Display Units:</label>
-                    <input type="radio" name="units" value="kg" checked onchange="updateUnits()"> kg
-                    <input type="radio" name="units" value="g" onchange="updateUnits()"> grams
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
+                        <button class="btn btn-primary" onclick="nextStep()">View Results →</button>
+                    </div>
                 </div>
 
-                <table class="results-table" id="resultsTable">
-                    <thead>
-                        <tr>
-                            <th>Ingredient</th>
-                            <th>Percentage (%)</th>
-                            <th>Weight</th>
-                            <th>Cost per Unit (₦)</th>
-                            <th>Total Cost (₦)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="resultsBody">
-                    </tbody>
-                    <tfoot>
-                        <tr style="font-weight: bold; background: var(--primary-color); color: white;">
-                            <td>TOTAL</td>
-                            <td>100%</td>
-                            <td id="totalWeight"></td>
-                            <td>-</td>
-                            <td id="totalCost"></td>
-                        </tr>
-                    </tfoot>
-                </table>
+                <!-- Step 5: Results -->
+                <div class="step" id="step5">
+                    <h2 class="step-title">Step 5: Final Results</h2>
+                    
+                    <div class="unit-toggle">
+                        <label>Display Units:</label>
+                        <input type="radio" name="units" value="kg" checked onchange="updateUnits()"> kg
+                        <input type="radio" name="units" value="g" onchange="updateUnits()"> grams
+                    </div>
 
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
-                    <button class="btn btn-success" onclick="exportResults('csv')">📊 Export CSV</button>
-                    <button class="btn btn-primary" onclick="resetCalculator()">🔄 New Calculation</button>
+                    <table class="results-table" id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>Ingredient</th>
+                                <th>Percentage (%)</th>
+                                <th>Weight</th>
+                                <th>Cost per Unit (₦)</th>
+                                <th>Total Cost (₦)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsBody">
+                        </tbody>
+                        <tfoot>
+                            <tr style="font-weight: bold; background: var(--primary-color); color: white;">
+                                <td>TOTAL</td>
+                                <td>100%</td>
+                                <td id="totalWeight"></td>
+                                <td>-</td>
+                                <td id="totalCost"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
+                        <button class="btn btn-success" onclick="exportResults('csv')">📊 Export CSV</button>
+                        <button class="btn btn-primary" onclick="resetCalculator()">🔄 New Calculation</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -807,6 +868,12 @@
         let calculationResults = {};
         let currentUnits = 'kg';
         let customIngredientCounter = { protein: 0, energy: 0, fixed: 0 };
+
+        // Landing page to calculator navigation
+        function startCalculator() {
+            document.getElementById('landingPage').style.display = 'none';
+            document.getElementById('calculatorPage').classList.add('active');
+        }
 
         // Theme toggle function
         function toggleTheme() {
