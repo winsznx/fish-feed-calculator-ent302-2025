@@ -1,1581 +1,1046 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fish Feed Software Development Calculator</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary-color: #2563eb;
-            --secondary-color: #64748b;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --error-color: #ef4444;
-            --bg-color: #ffffff;
-            --surface-color: #f8fafc;
-            --text-color: #1e293b;
-            --text-secondary: #64748b;
-            --border-color: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        [data-theme="dark"] {
-            --bg-color: #1a1a1a;
-            --surface-color: #2d2d2d;
-            --text-color: #e5e5e5;
-            --text-secondary: #a3a3a3;
-            --border-color: #404040;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            transition: all 0.3s ease;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            min-height: 100vh;
-        }
-
-        /* Landing Page Styles */
-        .landing-page {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .landing-header {
-            background: linear-gradient(135deg, var(--primary-color), #3b82f6);
-            color: white;
-            border-radius: 20px;
-            padding: 3rem 2rem;
-            box-shadow: var(--shadow);
-            max-width: 800px;
-            margin-bottom: 2rem;
-        }
-
-        .landing-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            line-height: 1.2;
-        }
-
-        .contributors {
-            font-size: 1.5rem;
-            font-weight: 600;
-            opacity: 0.9;
-            margin-bottom: 1rem;
-        }
-
-        .contributors-names {
-            font-size: 1.4rem;
-            opacity: 0.8;
-            font-style: italic;
-        }
-
-        .start-button {
-            background: var(--success-color);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 1rem 2rem;
-            font-size: 1.2rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
-            margin-top: 1rem;
-        }
-
-        .start-button:hover {
-            background: #059669;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Calculator Page Styles */
-        .calculator-page {
-            display: none;
-        }
-
-        .calculator-page.active {
-            display: block;
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--surface-color);
-            border: 2px solid var(--border-color);
-            border-radius: 50px;
-            padding: 8px 16px;
-            cursor: pointer;
-            font-size: 1.5rem;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .theme-icon {
-            width: 24px;
-            height: 24px;
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>');
-            background-size: contain;
-            background-repeat: no-repeat;
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] .theme-icon {
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>');
-        }
-
-        .add-ingredient-btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin: 0.5rem 0;
-            transition: all 0.3s ease;
-        }
-
-        .add-ingredient-btn:hover {
-            background: #1d4ed8;
-            transform: translateY(-1px);
-        }
-
-        .custom-ingredient {
-            background: rgba(59, 130, 246, 0.05);
-            border: 2px dashed var(--primary-color);
-            border-radius: 8px;
-            margin: 0.5rem 0;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .custom-ingredients-section {
-            background: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .custom-ingredients-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--text-color);
-            font-size: 0.95rem;
-        }
-
-        .custom-ingredients-container {
-            background: var(--bg-color);
-            border: 1px dashed var(--border-color);
-            border-radius: 6px;
-            padding: 0.75rem;
-            min-height: 40px;
-            margin-bottom: 0.75rem;
-        }
-
-        .custom-ingredients-placeholder {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            font-style: italic;
-        }
-
-        .remove-ingredient-btn {
-            background: var(--error-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 0.25rem 0.5rem;
-            cursor: pointer;
-            font-size: 0.8rem;
-            min-width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .remove-ingredient-btn:hover {
-            background: #dc2626;
-            transform: scale(1.1);
-        }
-
-        .wizard-container {
-            background: var(--surface-color);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 4px;
-            background: var(--border-color);
-            position: relative;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
-            transition: width 0.3s ease;
-        }
-
-        .step {
-            display: none;
-            padding: 2rem;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .step.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-20px); }
-        }
-
-        .step-title {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .ingredient-group {
-            margin-bottom: 2rem;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .group-header {
-            background: var(--primary-color);
-            color: white;
-            padding: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .group-content {
-            padding: 1rem;
-            background: var(--bg-color);
-        }
-
-        .ingredient-row {
-            display: grid;
-            grid-template-columns: auto 1fr 1fr 1fr;
-            gap: 1rem;
-            align-items: center;
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .ingredient-row:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-
-        .checkbox {
-            width: 20px;
-            height: 20px;
-            accent-color: var(--primary-color);
-        }
-
-        .input-field {
-            padding: 0.75rem;
-            border: 2px solid var(--border-color);
-            border-radius: 6px;
-            background: var(--bg-color);
-            color: var(--text-color);
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        .toggle-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease;
-            padding: 0;
-        }
-
-        .toggle-content.open {
-            max-height: 1200px;
-            overflow: visible;
-            padding: 1rem 0;
-        }
-
-        .pearson-square {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: 1fr 1fr 1fr;
-            width: 300px;
-            height: 300px;
-            margin: 2rem auto;
-            border: 3px solid var(--primary-color);
-            background: var(--surface-color);
-        }
-
-        .pearson-cell {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--border-color);
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .pearson-center {
-            background: var(--primary-color);
-            color: white;
-            font-size: 1.3rem;
-        }
-
-        .calculation-steps {
-            background: var(--surface-color);
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-        }
-
-        .results-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 2rem;
-            background: var(--surface-color);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .results-table th,
-        .results-table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .results-table th {
-            background: var(--primary-color);
-            color: white;
-            font-weight: 600;
-        }
-
-        .results-table tr:hover {
-            background: var(--border-color);
-        }
-
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            justify-content: space-between;
-            margin-top: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: var(--secondary-color);
-            color: white;
-        }
-
-        .btn-success {
-            background: var(--success-color);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .unit-toggle {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            margin: 1rem 0;
-        }
-
-        .error-message {
-            color: var(--error-color);
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-        }
-
-        .success-message {
-            color: var(--success-color);
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-
-            .landing-title {
-                font-size: 1.8rem;
-            }
-
-            .contributors {
-                font-size: 1.1rem;
-            }
-
-            .contributors-names {
-                font-size: 1rem;
-            }
-
-            .ingredient-row {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-                text-align: left;
-            }
-
-            .ingredient-row label {
-                font-size: 0.9rem;
-                margin-bottom: 0.3rem;
-                display: block;
-            }
-
-            .pearson-square {
-                width: 200px;
-                height: 200px;
-                font-size: 0.9rem;
-            }
-
-            .pearson-cell {
-                font-size: 0.8rem;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
-                margin: 0.25rem 0;
-            }
-
-            .theme-toggle {
-                top: 10px;
-                right: 10px;
-                padding: 6px 12px;
-                font-size: 1.2rem;
-            }
-
-            .step-title {
-                font-size: 1.5rem;
-            }
-
-            .input-field {
-                width: 100%;
-                font-size: 1rem;
-                padding: 0.75rem;
-            }
-
-            .results-table {
-                font-size: 0.9rem;
-            }
-
-            .results-table th,
-            .results-table td {
-                padding: 0.5rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .landing-title {
-                font-size: 1.5rem;
-            }
-
-            .ingredient-row {
-                padding: 0.5rem;
-            }
-
-            .pearson-square {
-                width: 180px;
-                height: 180px;
-            }
-
-            .step {
-                padding: 1rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fish Feed Software Development Calculator</title>
+
+  <style>
+    /* ============ Base / Theme Tokens ============ */
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    :root{
+      --primary-color:#2563eb;   /* blue-600 */
+      --primary-dark:#1d4ed8;    /* blue-700 */
+      --secondary-color:#64748b; /* zinc-500/600 */
+      --success-color:#10b981;
+      --warning-color:#f59e0b;
+      --error-color:#ef4444;
+      --bg-color:#ffffff;
+      --surface-color:#f8fafc;
+      --text-color:#1e293b;
+      --text-secondary:#64748b;
+      --border-color:#e2e8f0;
+      --shadow:0 4px 6px -1px rgba(0,0,0,.1);
+    }
+    [data-theme="dark"]{
+      --bg-color:#0b0b0c;
+      --surface-color:#17181a;
+      --text-color:#e5e5e5;
+      --text-secondary:#a3a3a3;
+      --border-color:#2a2b2f;
+    }
+
+    body{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background:var(--bg-color);
+      color:var(--text-color);
+      line-height:1.6;
+      transition:background .25s, color .25s;
+      min-height:100vh;
+    }
+
+    .container{ max-width:1200px; margin:0 auto; padding:20px; }
+
+    /* ============ Buttons (shared across landing + calculator) ============ */
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+      padding:.8rem 1.25rem; border-radius:1rem; font-weight:600;
+      cursor:pointer; border:1px solid transparent; transition:transform .06s ease, background .15s ease, border .15s ease, color .15s ease;
+    }
+    .btn:active{ transform:scale(.99); }
+    .btn-primary{
+      background:var(--primary-color); color:#fff; box-shadow:0 10px 24px rgba(37,99,235,.22);
+    }
+    .btn-primary:hover{ background:var(--primary-dark); }
+    .btn-outline{
+      color:var(--text-color); background:transparent; border-color:var(--border-color);
+    }
+    .btn-outline:hover{ background:rgba(0,0,0,.03); }
+    [data-theme="dark"] .btn-outline:hover{ background:rgba(255,255,255,.05); }
+
+    /* ============ Header / Gradients ============ */
+    .site-header{ max-width:1200px; margin:0 auto; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; }
+    .brand{ display:flex; align-items:center; gap:.5rem; }
+    .brand-badge{ height:36px; width:36px; border-radius:12px; background:var(--primary-color); color:#fff; display:grid; place-items:center; font-weight:800; }
+    .nav{ display:none; gap:1.25rem; }
+    @media (min-width:768px){ .nav{ display:flex; } }
+    .nav a{ color:var(--text-secondary); text-decoration:none; font-size:.95rem;}
+    .nav a:hover{ color:var(--text-color); }
+
+    .bg-glow{ position:fixed; inset:0; pointer-events:none; z-index:-1; }
+    .bg-glow > div{ position:absolute; border-radius:9999px; filter:blur(64px); opacity:.35;}
+    .g1{ height:36rem; width:36rem; left:-8rem; top:-6rem; background:#60a5fa; }
+    .g2{ height:30rem; width:30rem; right:-10rem; top:18rem; background:#818cf8; }
+    .g3{ height:24rem; width:24rem; left:40%; bottom:2rem; background:#22d3ee; }
+    [data-theme="dark"] .bg-glow > div{ opacity:.22; }
+
+    /* ============ Landing ============ */
+    .landing{ max-width:1200px; margin:0 auto; padding:0 20px 32px; }
+    .hero{ display:grid; gap:2rem; align-items:center; margin-top:12px; }
+    @media (min-width:768px){ .hero{ grid-template-columns:1fr 1fr; margin-top:28px; } }
+
+    .chip{
+      display:inline-block; padding:.35rem .75rem; border-radius:999px;
+      border:1px solid color-mix(in oklab, var(--primary-color) 35%, transparent);
+      color:color-mix(in oklab, var(--primary-color) 75%, #000);
+      background:color-mix(in oklab, var(--primary-color) 8%, transparent);
+      font-weight:700; font-size:.85rem;
+    }
+    [data-theme="dark"] .chip{
+      color:color-mix(in oklab, var(--primary-color) 85%, #fff);
+      background:color-mix(in oklab, var(--primary-color) 14%, transparent);
+    }
+
+    .card{
+      border-radius:20px; background:color-mix(in oklab, var(--surface-color) 88%, transparent);
+      border:1px solid color-mix(in oklab, var(--border-color) 85%, transparent);
+      box-shadow:var(--shadow); backdrop-filter:saturate(120%) blur(6px);
+    }
+
+    .hero-card{ padding:24px; }
+    .preview{
+      border-radius:16px; padding:16px;
+      background:linear-gradient(to bottom right, color-mix(in oklab, var(--primary-color) 8%, transparent), transparent);
+    }
+    [data-theme="dark"] .preview{
+      background:linear-gradient(to bottom right, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    }
+
+    .section{ margin-top:48px; }
+    .section h2{ text-align:center; font-size:clamp(1.25rem, 2vw + 1rem, 2rem); font-weight:800; margin-bottom:16px; }
+    .features{ display:grid; gap:16px; }
+    @media (min-width:768px){ .features{ grid-template-columns:repeat(3,1fr); } }
+    .feature{ padding:20px; }
+
+    /* Remove default bullets where we use styled blocks (fixes double bullets) */
+    .preview ul,
+    .contributors-list,
+    .aff-list {
+      list-style: none;
+      padding-left: 0;
+      margin-left: 0;
+    }
+
+    .contributors-list li,
+    .aff-list li{
+      padding:.5rem .75rem; border-radius:10px;
+      background:color-mix(in oklab, var(--surface-color) 92%, transparent);
+      border:1px solid var(--border-color);
+    }
+
+    /* ============ Theme Toggle ============ */
+    .theme-toggle{
+      position:fixed; right:16px; top:16px; z-index:999;
+      background:var(--surface-color); border:1px solid var(--border-color);
+      border-radius:999px; padding:8px 14px; font-weight:600; display:flex; gap:.5rem; align-items:center; cursor:pointer;
+      box-shadow:var(--shadow);
+    }
+
+    /* ============ Calculator (original styles preserved) ============ */
+    .landing-page{ display:block; }
+    .calculator-page{ display:none; }
+    .calculator-page.active{ display:block; }
+
+    .wizard-container{ background:var(--surface-color); border-radius:12px; box-shadow:var(--shadow); overflow:hidden; }
+    .progress-bar{ height:4px; background:var(--border-color); position:relative; }
+    .progress-fill{ height:100%; background:linear-gradient(90deg, var(--primary-color), var(--success-color)); transition:width .3s ease; }
+
+    .step{ display:none; padding:2rem; animation:fadeIn .3s ease; }
+    .step.active{ display:block; }
+    .step-title{ font-size:1.8rem; margin-bottom:1rem; color:var(--primary-color); font-weight:700; }
+
+    .ingredient-group{ margin-bottom:2rem; border:2px solid var(--border-color); border-radius:10px; overflow:hidden; }
+    .group-header{ background:var(--primary-color); color:#fff; padding:1rem; font-weight:700; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+    .group-content{ padding:1rem; background:var(--bg-color); }
+    .ingredient-row{
+      display:grid; grid-template-columns:auto 1fr 1fr 1fr; gap:1rem; align-items:center;
+      padding:.75rem; border-bottom:1px solid var(--border-color); margin-bottom:.5rem;
+    }
+    .ingredient-row:last-child{ border-bottom:none; margin-bottom:0; }
+
+    .checkbox{ width:20px; height:20px; accent-color:var(--primary-color); }
+    .input-field{
+      padding:.75rem; border:2px solid var(--border-color); border-radius:8px; background:var(--bg-color);
+      color:var(--text-color); font-size:1rem; transition:border-color .2s ease;
+    }
+    .input-field:focus{ outline:none; border-color:var(--primary-color); }
+
+    .toggle-content{ max-height:0; overflow:hidden; transition:max-height .5s ease; padding:0; }
+    .toggle-content.open{ max-height:1200px; overflow:visible; padding:1rem 0; }
+
+    .pearson-square{
+      display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr);
+      width:300px; height:300px; margin:2rem auto; border:3px solid var(--primary-color); background:var(--surface-color);
+    }
+    .pearson-cell{ display:flex; align-items:center; justify-content:center; border:1px solid var(--border-color); font-weight:700; font-size:1.1rem; }
+    .pearson-center{ background:var(--primary-color); color:#fff; font-size:1.3rem; }
+
+    .calculation-steps{ background:var(--surface-color); padding:1.5rem; border-radius:8px; margin:1rem 0; }
+
+    .results-table{ width:100%; border-collapse:collapse; margin-top:2rem; background:var(--surface-color); border-radius:8px; overflow:hidden; }
+    .results-table th, .results-table td{ padding:1rem; text-align:left; border-bottom:1px solid var(--border-color); }
+    .results-table th{ background:var(--primary-color); color:#fff; font-weight:700; }
+    .results-table tr:hover{ background:var(--border-color); }
+
+    .button-group{ display:flex; gap:1rem; justify-content:space-between; margin-top:2rem; flex-wrap:wrap; }
+    .btn-secondary{ background:var(--secondary-color); color:#fff; }
+    .btn-success{ background:var(--success-color); color:#fff; }
+
+    .add-ingredient-btn{
+      background:var(--primary-color); color:#fff; border:none; border-radius:8px; padding:.5rem 1rem; cursor:pointer; font-weight:600;
+    }
+    .add-ingredient-btn:hover{ background:var(--primary-dark); }
+
+    .custom-ingredient{ background:rgba(59,130,246,.05); border:2px dashed var(--primary-color); border-radius:8px; margin:.5rem 0; animation:fadeIn .3s ease; }
+    .custom-ingredients-section{ background:var(--surface-color); border:1px solid var(--border-color); border-radius:8px; padding:1rem; margin:1rem 0; }
+    .custom-ingredients-header{ display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem; font-weight:700; color:var(--text-color); font-size:.95rem; }
+    .custom-ingredients-container{ background:var(--bg-color); border:1px dashed var(--border-color); border-radius:6px; padding:.75rem; min-height:40px; margin-bottom:.75rem; }
+    .custom-ingredients-placeholder{ color:var(--text-secondary); font-size:.85rem; font-style:italic; }
+    .remove-ingredient-btn{ background:var(--error-color); color:#fff; border:none; border-radius:4px; padding:.25rem .5rem; cursor:pointer; font-size:.8rem; min-width:24px; height:24px; display:flex; align-items:center; justify-content:center; }
+    .remove-ingredient-btn:hover{ transform:scale(1.1); }
+
+    .unit-toggle{ display:flex; gap:.5rem; align-items:center; margin:1rem 0; }
+    .error-message{ color:var(--error-color); font-size:.9rem; margin-top:.5rem; }
+    .success-message{ color:var(--success-color); font-size:.9rem; margin-top:.5rem; }
+
+    @keyframes fadeIn{ from{opacity:0; transform:translateY(20px)} to{opacity:1; transform:translateY(0)} }
+    @keyframes fadeOut{ from{opacity:1; transform:translateY(0)} to{opacity:0; transform:translateY(-20px)} }
+
+    /* Responsive */
+    @media (max-width:768px){
+      .ingredient-row{ grid-template-columns:1fr; gap:.5rem; text-align:left; }
+      .pearson-square{ width:220px; height:220px; }
+      .button-group{ flex-direction:column; }
+      .btn{ width:100%; justify-content:center; }
+    }
+  </style>
 </head>
+
 <body data-theme="light">
-    <div class="theme-toggle" onclick="toggleTheme()">
-        <div class="theme-icon" id="themeIcon"></div>
-        <span id="themeText">Dark</span>
+  <!-- Soft gradient glows -->
+  <div class="bg-glow">
+    <div class="g1"></div>
+    <div class="g2"></div>
+    <div class="g3"></div>
+  </div>
+
+  <!-- Theme toggle (single source of truth) -->
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="themeText">Dark</span>
+  </button>
+
+  <!-- ========= Header ========= -->
+  <header class="site-header">
+    <div class="brand">
+      <div class="brand-badge">FF</div>
+      <strong>Fish Feed Calculator</strong>
     </div>
-    
-    <!-- Landing Page -->
-<div class="landing-page" id="landingPage">
-    <div class="landing-header">
-        <!-- Title -->
-        <h1 class="landing-title">Fish Feed Software Development Calculator</h1>
-        <h2 class="sub-title">
-            For Calculating Crude Protein (CP), Weight (Quantity), and Cost of Production
-        </h2>
+    <nav class="nav">
+      <a href="#features">Features</a>
+      <a href="#authors">Authors</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="btn btn-primary" onclick="startCalculator()">▶ Start Calculator</button>
+  </header>
 
-        <!-- Contributors -->
-        <div class="contributors">by</div>
-        <div class="contributors-names">
-            Morakinyo Oluwatayo Samuel, Popoola Timothy Olaoluwa, 
-            Dada Ayomikun Bethel, Omoyeni Bright Testimony, 
-            Maduakolam Jacinta Chinwedu, Ademusere Patrick Opeyemi, 
-            Dr. Gbadamosi O.K, Prof. Olawusi - Peters O.O
+  <!-- ========= Landing Page ========= -->
+  <main id="landingPage" class="landing">
+    <!-- Hero -->
+    <section class="hero">
+      <div>
+        <span class="chip">Academic Project • FUTA</span>
+        <h1 style="font-size:clamp(1.75rem, 1.5vw + 1.5rem, 3rem); line-height:1.15; font-weight:900; margin:14px 0 10px;">
+          Fish Feed Software Development Calculator
+        </h1>
+        <p style="font-size:1.1rem; color:var(--text-secondary); max-width:46ch;">
+          Calculate <strong>Crude Protein (CP)</strong>, <strong>Weight (Quantity)</strong>, and
+          <strong>Cost of Production</strong> for aquaculture feed with an intuitive, step-by-step wizard.
+        </p>
+        <div style="display:flex; gap:.75rem; flex-wrap:wrap; margin-top:16px;">
+          <button class="btn btn-primary" onclick="startCalculator()">▶ Start Calculator</button>
+          <a class="btn btn-outline" href="#features">Learn more →</a>
         </div>
-
-        <!-- Affiliations -->
-        <div class="affiliations">
-            <p>
-                <strong>Fisheries and Aquaculture Technology Department, Federal University of Technology, PMB 704, Akure (FUTA), Ondo State, Nigeria</strong>
-            </p>
-            <p>
-                1. Electrical and Electronic Engineering Department, FUTA <br>
-                2. Software Engineering Department, FUTA <br>
-                3. Statistics Department, FUTA <br>
-                4. Animal Production and Health Department, FUTA
-            </p>
+        <div style="display:flex; gap:1rem; margin-top:10px; color:var(--text-secondary); font-size:.9rem;">
+          <span>✅ Offline-friendly</span><span>⚡ Fast & intuitive</span>
         </div>
+      </div>
 
-        <!-- Contact -->
-        <div class="contact">
-            <p>
-                <strong>Email:</strong> 
-                <a href="mailto:osmorakinyo@gmail.com">osmorakinyo@gmail.com</a> | 
-                <a href="mailto:osmorakinyo@futa.edu.ng">osmorakinyo@futa.edu.ng</a>
-            </p>
-        </div>
-    </div>
-
-    <!-- Call to Action -->
-    <button class="start-button" onclick="startCalculator()">Start Calculator</button>
-</div>
-
-
-    <!-- Calculator Page -->
-    <div class="calculator-page" id="calculatorPage">
-        <div class="container">
-            <div class="wizard-container">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-
-                <!-- Step 1: Ingredients Input -->
-                <div class="step active" id="step1">
-                    <h2 class="step-title">Step 1: Enter Ingredient Information</h2>
-                    
-                    <!-- Protein Sources -->
-                    <div class="ingredient-group">
-                        <div class="group-header" onclick="toggleProteinSources()">
-                            <span>Protein Sources</span>
-                            <span id="proteinToggleIcon">▼</span>
-                        </div>
-                        <div class="group-content toggle-content open" id="proteinSourcesDetails">
-                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                <input type="checkbox" class="checkbox" id="fm_check">
-                                <label for="fm_check">Fish Meal (FM)</label>
-                                <input type="number" class="input-field" id="fm_protein" placeholder="Protein %">
-                                <input type="number" class="input-field" id="fm_cost" placeholder="Cost/kg (₦)" step="0.01">
-                            </div>
-                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                <input type="checkbox" class="checkbox" id="sbm_check">
-                                <label for="sbm_check">Soya Bean Meal (SBM)</label>
-                                <input type="number" class="input-field" id="sbm_protein" placeholder="Protein %">
-                                <input type="number" class="input-field" id="sbm_cost" placeholder="Cost/kg (₦)" step="0.01">
-                            </div>
-                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                <input type="checkbox" class="checkbox" id="gnc_check">
-                                <label for="gnc_check">Groundnut Cake (GNC)</label>
-                                <input type="number" class="input-field" id="gnc_protein" placeholder="Protein %">
-                                <input type="number" class="input-field" id="gnc_cost" placeholder="Cost/kg (₦)" step="0.01">
-                            </div>
-                            <div id="customProteinContainer"></div>
-                            <button type="button" class="add-ingredient-btn" onclick="addCustomIngredient('protein')">
-                                + Add Custom Protein Source
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Energy Sources -->
-                    <div class="ingredient-group">
-                        <div class="group-header" onclick="toggleEnergySources()">
-                            <span>Energy Sources</span>
-                            <span id="energyToggleIcon">▼</span>
-                        </div>
-                        <div class="group-content toggle-content open" id="energySourcesDetails">
-                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                <input type="checkbox" class="checkbox" id="ym_check">
-                                <label for="ym_check">Yellow Maize (YM)</label>
-                                <input type="number" class="input-field" id="ym_protein" placeholder="Protein %">
-                                <input type="number" class="input-field" id="ym_cost" placeholder="Cost/kg (₦)" step="0.01">
-                            </div>
-                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                <input type="checkbox" class="checkbox" id="wb_check">
-                                <label for="wb_check">Wheat Bran (WB)</label>
-                                <input type="number" class="input-field" id="wb_protein" placeholder="Protein %">
-                                <input type="number" class="input-field" id="wb_cost" placeholder="Cost/kg (₦)" step="0.01">
-                            </div>
-                            <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                <input type="checkbox" class="checkbox" id="pkc_check">
-                                <label for="pkc_check">Palm Kernel Cake (PKC)</label>
-                                <input type="number" class="input-field" id="pkc_protein" placeholder="Protein %">
-                                <input type="number" class="input-field" id="pkc_cost" placeholder="Cost/kg (₦)" step="0.01">
-                            </div>
-                            <div id="customEnergyContainer"></div>
-                            <button type="button" class="add-ingredient-btn" onclick="addCustomIngredient('energy')">
-                                + Add Custom Energy Source
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="button-group">
-                        <div></div>
-                        <button class="btn btn-primary" onclick="nextStep()">Next Step →</button>
-                    </div>
-                </div>
-
-                <!-- Step 2: Fixed Ingredients -->
-                <div class="step" id="step2">
-                    <h2 class="step-title">Step 2: Fixed Ingredients</h2>
-                    
-                    <div class="ingredient-group">
-                        <div class="group-header" onclick="toggleFixedIngredients()">
-                            <span>Fixed Ingredients (Total %)</span>
-                            <span id="toggleIcon">▼</span>
-                        </div>
-                        <div class="group-content">
-                            <div class="ingredient-row">
-                                <span></span>
-                                <label>Total Fixed Ingredients %</label>
-                                <input type="number" class="input-field" id="total_fi" placeholder="Total %" max="100">
-                                <span></span>
-                            </div>
-                            
-                            <div class="toggle-content open" id="fixedIngredientsDetails">
-                                
-                                <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                    <input type="checkbox" class="checkbox" id="fi_premix_check">
-                                    <label><strong>🟡 Fish Premix (%)</strong></label>
-                                    <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
-                                    <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
-                                </div>
-                                
-                                <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                    <input type="checkbox" class="checkbox" id="fi_methionine_check">
-                                    <label><strong>🧪 Methionine (%)</strong></label>
-                                    <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
-                                    <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
-                                </div>
-                                
-                                <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                    <input type="checkbox" class="checkbox" id="fi_lysine_check">
-                                    <label><strong>🧪 Lysine (%)</strong></label>
-                                    <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
-                                    <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
-                                </div>
-                                
-                                <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                    <input type="checkbox" class="checkbox" id="fi_binder_check">
-                                    <label><strong>🔗 Binder (%)</strong></label>
-                                    <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
-                                    <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
-                                </div>
-                                
-                                <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                    <input type="checkbox" class="checkbox" id="fi_oil_check">
-                                    <label><strong>🫒 Vegetable Oil (%)</strong></label>
-                                    <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
-                                    <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
-                                </div>
-                                
-                                <div class="ingredient-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                    <input type="checkbox" class="checkbox" id="fi_salt_check">
-                                    <label><strong>🧂 Salt (%)</strong></label>
-                                    <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
-                                    <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
-                                </div>
-                                
-                                <!-- Custom Fixed Ingredients Section -->
-                                <div class="custom-ingredients-section">
-                                    <div class="custom-ingredients-header">
-                                        <span>🔧</span>
-                                        <span>Custom Fixed Ingredients</span>
-                                    </div>
-                                    <div id="customFixedContainer" class="custom-ingredients-container">
-                                        <div class="custom-ingredients-placeholder">Custom ingredients will appear here...</div>
-                                    </div>
-                                    <button type="button" class="add-ingredient-btn" onclick="addCustomIngredient('fixed')">
-                                        + Add Custom Fixed Ingredient
-                                    </button>
-                                </div>
-                                
-                                <div class="success-message" id="fiValidation" style="margin-top: 15px;"></div>
-                                
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="button-group">
-                        <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
-                        <button class="btn btn-primary" onclick="nextStep()">Next Step →</button>
-                    </div>
-                </div>
-
-                <!-- Step 3: Feed Requirements -->
-                <div class="step" id="step3">
-                    <h2 class="step-title">Step 3: Feed Requirements</h2>
-                    
-                    <div class="ingredient-group">
-                        <div class="group-header">
-                            <span>Feed Specifications</span>
-                            <span>🎯</span>
-                        </div>
-                        <div class="group-content">
-                            <div class="ingredient-row">
-                                <span></span>
-                                <label>Required Crude Protein (CP) %</label>
-                                <input type="number" class="input-field" id="required_cp" placeholder="Required CP %" step="0.1">
-                                <span></span>
-                            </div>
-                            <div class="ingredient-row">
-                                <span></span>
-                                <label>Total Feed Weight (kg)</label>
-                                <input type="number" class="input-field" id="total_weight" placeholder="Total weight" step="0.1">
-                                <span></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="button-group">
-                        <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
-                        <button class="btn btn-primary" onclick="calculateFeed()">Calculate Feed →</button>
-                    </div>
-                </div>
-
-                <!-- Step 4: Calculations -->
-                <div class="step" id="step4">
-                    <h2 class="step-title">Step 4: Pearson Square Calculation</h2>
-                    
-                    <div class="calculation-steps">
-                        <h3>Mean Protein Source: <span id="meanProtein"></span>%</h3>
-                        <h3>Mean Energy Source: <span id="meanEnergy"></span>%</h3>
-                    </div>
-
-                    <div class="pearson-square">
-                        <div class="pearson-cell" id="proteinSource"></div>
-                        <div class="pearson-cell"></div>
-                        <div class="pearson-cell" id="proteinDiff"></div>
-                        <div class="pearson-cell"></div>
-                        <div class="pearson-cell pearson-center" id="requiredCP"></div>
-                        <div class="pearson-cell"></div>
-                        <div class="pearson-cell" id="energyDiff"></div>
-                        <div class="pearson-cell"></div>
-                        <div class="pearson-cell" id="energySource"></div>
-                    </div>
-
-                    <div class="calculation-steps">
-                        <h3>Calculation Results:</h3>
-                        <p>Remaining % after Fixed Ingredients: <span id="remainingPercent"></span>%</p>
-                        <p>Protein Source %: <span id="proteinPercent"></span>%</p>
-                        <p>Energy Source %: <span id="energyPercent"></span>%</p>
-                    </div>
-
-                    <div class="button-group">
-                        <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
-                        <button class="btn btn-primary" onclick="nextStep()">View Results →</button>
-                    </div>
-                </div>
-
-                <!-- Step 5: Results -->
-                <div class="step" id="step5">
-                    <h2 class="step-title">Step 5: Final Results</h2>
-                    
-                    <div class="unit-toggle">
-                        <label>Display Units:</label>
-                        <input type="radio" name="units" value="kg" checked onchange="updateUnits()"> kg
-                        <input type="radio" name="units" value="g" onchange="updateUnits()"> grams
-                    </div>
-
-                    <table class="results-table" id="resultsTable">
-                        <thead>
-                            <tr>
-                                <th>Ingredient</th>
-                                <th>Percentage (%)</th>
-                                <th>Weight</th>
-                                <th>Cost per Unit (₦)</th>
-                                <th>Total Cost (₦)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="resultsBody">
-                        </tbody>
-                        <tfoot>
-                            <tr style="font-weight: bold; background: var(--primary-color); color: white;">
-                                <td>TOTAL</td>
-                                <td>100%</td>
-                                <td id="totalWeight"></td>
-                                <td>-</td>
-                                <td id="totalCost"></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-
-                    <div class="button-group">
-                        <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
-                        <button class="btn btn-success" onclick="exportResults('csv')">📊 Export CSV</button>
-                        <button class="btn btn-primary" onclick="resetCalculator()">🔄 New Calculation</button>
-                    </div>
-                </div>
+      <!-- Preview card -->
+      <div class="card hero-card">
+        <div class="preview">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <div>
+              <div style="font-size:.9rem; font-weight:700; margin-bottom:6px;">Inputs</div>
+              <ul style="color:var(--text-secondary); font-size:.95rem; line-height:1.5;">
+                <!-- NOTE: no manual bullets here to avoid double bullets -->
+                <li>Ingredient percentages</li>
+                <li>Batch size (kg)</li>
+                <li>Market prices</li>
+              </ul>
             </div>
+            <div>
+              <div style="font-size:.9rem; font-weight:700; margin-bottom:6px;">Preview Output</div>
+              <div class="card" style="padding:12px;">
+                <div style="font-size:.9rem;">Crude Protein</div>
+                <div style="font-size:1.6rem; font-weight:800;">35.2%</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; font-size:.95rem;">
+                  <div class="card" style="padding:10px;">Quantity: <strong>50 kg</strong></div>
+                  <div class="card" style="padding:10px;">Cost: <strong>₦ 42,300</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p style="margin-top:8px; font-size:.8rem; color:var(--text-secondary);">
+            *Sample values for illustration. Actual results depend on inputs.
+          </p>
         </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="section">
+      <h2>What you can calculate</h2>
+      <div class="features">
+        <div class="card feature">
+          <h3 style="font-weight:700;">Crude Protein (CP)</h3>
+          <p style="color:var(--text-secondary); font-size:.95rem;">Compute CP from selected ingredients.</p>
+        </div>
+        <div class="card feature">
+          <h3 style="font-weight:700;">Weight / Quantity</h3>
+          <p style="color:var(--text-secondary); font-size:.95rem;">Plan batch sizes per formulation.</p>
+        </div>
+        <div class="card feature">
+          <h3 style="font-weight:700;">Cost of Production</h3>
+          <p style="color:var(--text-secondary); font-size:.95rem;">Estimate total cost from market prices.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Authors & Affiliations -->
+    <section id="authors" class="section" style="display:grid; gap:16px; grid-template-columns:1fr; }
+      @media (min-width: 992px){ grid-template-columns:1fr 1fr; }">
+      <div class="card" style="padding:20px;">
+        <h3 style="font-size:1.25rem; font-weight:800;">Contributors</h3>
+        <p style="color:var(--text-secondary); margin:.25rem 0 .75rem;">by</p>
+        <ul class="contributors-list" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:.95rem;">
+          <li>Morakinyo Oluwatayo Samuel</li>
+          <li>Popoola Timothy Olaoluwa</li>
+          <li>Dada Ayomikun Bethel</li>
+          <li>Omoyeni Bright Testimony</li>
+          <li>Maduakolam Jacinta Chinwedu</li>
+          <li>Ademusere Patrick Opeyemi</li>
+          <li>Dr. Gbadamosi O.K</li>
+          <li>Prof. Olawusi - Peters O.O</li>
+        </ul>
+      </div>
+      <div class="card" style="padding:20px;">
+        <h3 style="font-size:1.25rem; font-weight:800;">Affiliations</h3>
+        <div style="margin-top:.5rem; font-size:.95rem;">
+          <p style="font-weight:700;">
+            Fisheries and Aquaculture Technology Department, Federal University of Technology, PMB 704, Akure (FUTA), Ondo State, Nigeria
+          </p>
+          <ul class="aff-list" style="margin-top:.5rem; list-style:decimal inside; display:grid; gap:6px;">
+            <li>Electrical and Electronic Engineering Department, FUTA</li>
+            <li>Software Engineering Department, FUTA</li>
+            <li>Statistics Department, FUTA</li>
+            <li>Animal Production and Health Department, FUTA</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section">
+      <div class="card" style="padding:22px;">
+        <h3 style="text-align:center; font-size:1.25rem; font-weight:800;">Contact</h3>
+        <p style="text-align:center; color:var(--text-secondary); margin-top:.35rem;">Questions or collaboration requests? We’d love to hear from you.</p>
+        <div style="display:grid; gap:10px; grid-template-columns:1fr; margin-top:14px;">
+          <a class="btn btn-outline" href="mailto:osmorakinyo@gmail.com" style="text-align:center;">osmorakinyo@gmail.com</a>
+          <a class="btn btn-outline" href="mailto:osmorakinyo@futa.edu.ng" style="text-align:center;">osmorakinyo@futa.edu.ng</a>
+        </div>
+        <div style="text-align:center; margin-top:14px;">
+          <button class="btn btn-primary" onclick="startCalculator()">▶ Start Calculator</button>
+        </div>
+      </div>
+    </section>
+
+    <footer style="text-align:center; opacity:.7; font-size:.9rem; padding:28px 0;">
+      © <span id="year"></span> FUTA – Fisheries & Aquaculture Technology • Built for ENT302
+    </footer>
+  </main>
+
+  <!-- ========= Calculator Page (content preserved) ========= -->
+  <section id="calculatorPage" class="calculator-page">
+    <div class="container">
+      <!-- Top controls (only Back button – removed duplicate theme button) -->
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:.75rem; padding-top:6px;">
+        <button class="btn btn-outline" onclick="backToLanding()">← Back to Landing</button>
+      </div>
+
+      <div class="wizard-container" style="margin-top:12px;">
+        <!-- progress bar -->
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:20%;"></div></div>
+
+        <!-- ============= YOUR ORIGINAL CALCULATOR STEPS (unchanged) ============= -->
+        <!-- Step 1 -->
+        <div class="step active" id="step1">
+          <h2 class="step-title">Step 1: Enter Ingredient Information</h2>
+
+          <!-- Protein Sources -->
+          <div class="ingredient-group">
+            <div class="group-header" onclick="toggleProteinSources()">
+              <span>Protein Sources</span>
+              <span id="proteinToggleIcon">▼</span>
+            </div>
+            <div class="group-content toggle-content open" id="proteinSourcesDetails">
+              <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
+                <input type="checkbox" class="checkbox" id="fm_check">
+                <label for="fm_check">Fish Meal (FM)</label>
+                <input type="number" class="input-field" id="fm_protein" placeholder="Protein %">
+                <input type="number" class="input-field" id="fm_cost" placeholder="Cost/kg (₦)" step="0.01">
+              </div>
+              <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
+                <input type="checkbox" class="checkbox" id="sbm_check">
+                <label for="sbm_check">Soya Bean Meal (SBM)</label>
+                <input type="number" class="input-field" id="sbm_protein" placeholder="Protein %">
+                <input type="number" class="input-field" id="sbm_cost" placeholder="Cost/kg (₦)" step="0.01">
+              </div>
+              <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
+                <input type="checkbox" class="checkbox" id="gnc_check">
+                <label for="gnc_check">Groundnut Cake (GNC)</label>
+                <input type="number" class="input-field" id="gnc_protein" placeholder="Protein %">
+                <input type="number" class="input-field" id="gnc_cost" placeholder="Cost/kg (₦)" step="0.01">
+              </div>
+              <div id="customProteinContainer"></div>
+              <button type="button" class="add-ingredient-btn" onclick="addCustomIngredient('protein')">+ Add Custom Protein Source</button>
+            </div>
+          </div>
+
+          <!-- Energy Sources -->
+          <div class="ingredient-group">
+            <div class="group-header" onclick="toggleEnergySources()">
+              <span>Energy Sources</span>
+              <span id="energyToggleIcon">▼</span>
+            </div>
+            <div class="group-content toggle-content open" id="energySourcesDetails">
+              <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
+                <input type="checkbox" class="checkbox" id="ym_check">
+                <label for="ym_check">Yellow Maize (YM)</label>
+                <input type="number" class="input-field" id="ym_protein" placeholder="Protein %">
+                <input type="number" class="input-field" id="ym_cost" placeholder="Cost/kg (₦)" step="0.01">
+              </div>
+              <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
+                <input type="checkbox" class="checkbox" id="wb_check">
+                <label for="wb_check">Wheat Bran (WB)</label>
+                <input type="number" class="input-field" id="wb_protein" placeholder="Protein %">
+                <input type="number" class="input-field" id="wb_cost" placeholder="Cost/kg (₦)" step="0.01">
+              </div>
+              <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
+                <input type="checkbox" class="checkbox" id="pkc_check">
+                <label for="pkc_check">Palm Kernel Cake (PKC)</label>
+                <input type="number" class="input-field" id="pkc_protein" placeholder="Protein %">
+                <input type="number" class="input-field" id="pkc_cost" placeholder="Cost/kg (₦)" step="0.01">
+              </div>
+              <div id="customEnergyContainer"></div>
+              <button type="button" class="add-ingredient-btn" onclick="addCustomIngredient('energy')">+ Add Custom Energy Source</button>
+            </div>
+          </div>
+
+          <div class="button-group">
+            <div></div>
+            <button class="btn btn-primary" onclick="nextStep()">Next Step →</button>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step" id="step2">
+          <h2 class="step-title">Step 2: Fixed Ingredients</h2>
+
+          <div class="ingredient-group">
+            <div class="group-header" onclick="toggleFixedIngredients()">
+              <span>Fixed Ingredients (Total %)</span>
+              <span id="toggleIcon">▼</span>
+            </div>
+            <div class="group-content">
+              <div class="ingredient-row">
+                <span></span>
+                <label>Total Fixed Ingredients %</label>
+                <input type="number" class="input-field" id="total_fi" placeholder="Total %" max="100">
+                <span></span>
+              </div>
+
+              <div class="toggle-content open" id="fixedIngredientsDetails">
+                <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
+                  <input type="checkbox" class="checkbox" id="fi_premix_check">
+                  <label><strong>🟡 Fish Premix (%)</strong></label>
+                  <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
+                  <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
+                </div>
+
+                <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
+                  <input type="checkbox" class="checkbox" id="fi_methionine_check">
+                  <label><strong>🧪 Methionine (%)</strong></label>
+                  <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
+                  <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
+                </div>
+
+                <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
+                  <input type="checkbox" class="checkbox" id="fi_lysine_check">
+                  <label><strong>🧪 Lysine (%)</strong></label>
+                  <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
+                  <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
+                </div>
+
+                <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
+                  <input type="checkbox" class="checkbox" id="fi_binder_check">
+                  <label><strong>🔗 Binder (%)</strong></label>
+                  <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
+                  <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
+                </div>
+
+                <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
+                  <input type="checkbox" class="checkbox" id="fi_oil_check">
+                  <label><strong>🫒 Vegetable Oil (%)</strong></label>
+                  <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
+                  <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
+                </div>
+
+                <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
+                  <input type="checkbox" class="checkbox" id="fi_salt_check">
+                  <label><strong>🧂 Salt (%)</strong></label>
+                  <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
+                  <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
+                </div>
+
+                <!-- Custom Fixed Ingredients -->
+                <div class="custom-ingredients-section">
+                  <div class="custom-ingredients-header"><span>🔧</span><span>Custom Fixed Ingredients</span></div>
+                  <div id="customFixedContainer" class="custom-ingredients-container">
+                    <div class="custom-ingredients-placeholder">Custom ingredients will appear here...</div>
+                  </div>
+                  <button type="button" class="add-ingredient-btn" onclick="addCustomIngredient('fixed')">+ Add Custom Fixed Ingredient</button>
+                </div>
+
+                <div class="success-message" id="fiValidation" style="margin-top:15px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
+            <button class="btn btn-primary" onclick="nextStep()">Next Step →</button>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step" id="step3">
+          <h2 class="step-title">Step 3: Feed Requirements</h2>
+          <div class="ingredient-group">
+            <div class="group-header"><span>Feed Specifications</span><span>🎯</span></div>
+            <div class="group-content">
+              <div class="ingredient-row">
+                <span></span>
+                <label>Required Crude Protein (CP) %</label>
+                <input type="number" class="input-field" id="required_cp" placeholder="Required CP %" step="0.1">
+                <span></span>
+              </div>
+              <div class="ingredient-row">
+                <span></span>
+                <label>Total Feed Weight (kg)</label>
+                <input type="number" class="input-field" id="total_weight" placeholder="Total weight" step="0.1">
+                <span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
+            <button class="btn btn-primary" onclick="calculateFeed()">Calculate Feed →</button>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step" id="step4">
+          <h2 class="step-title">Step 4: Pearson Square Calculation</h2>
+          <div class="calculation-steps">
+            <h3>Mean Protein Source: <span id="meanProtein"></span>%</h3>
+            <h3>Mean Energy Source: <span id="meanEnergy"></span>%</h3>
+          </div>
+
+          <div class="pearson-square">
+            <div class="pearson-cell" id="proteinSource"></div>
+            <div class="pearson-cell"></div>
+            <div class="pearson-cell" id="proteinDiff"></div>
+            <div class="pearson-cell"></div>
+            <div class="pearson-cell pearson-center" id="requiredCP"></div>
+            <div class="pearson-cell"></div>
+            <div class="pearson-cell" id="energyDiff"></div>
+            <div class="pearson-cell"></div>
+            <div class="pearson-cell" id="energySource"></div>
+          </div>
+
+          <div class="calculation-steps">
+            <h3>Calculation Results:</h3>
+            <p>Remaining % after Fixed Ingredients: <span id="remainingPercent"></span>%</p>
+            <p>Protein Source %: <span id="proteinPercent"></span>%</p>
+            <p>Energy Source %: <span id="energyPercent"></span>%</p>
+          </div>
+
+          <div class="button-group">
+            <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
+            <button class="btn btn-primary" onclick="nextStep()">View Results →</button>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step" id="step5">
+          <h2 class="step-title">Step 5: Final Results</h2>
+
+          <div class="unit-toggle">
+            <label>Display Units:</label>
+            <input type="radio" name="units" value="kg" checked onchange="updateUnits()"> kg
+            <input type="radio" name="units" value="g" onchange="updateUnits()"> grams
+          </div>
+
+          <table class="results-table" id="resultsTable">
+            <thead>
+              <tr>
+                <th>Ingredient</th>
+                <th>Percentage (%)</th>
+                <th>Weight</th>
+                <th>Cost per Unit (₦)</th>
+                <th>Total Cost (₦)</th>
+              </tr>
+            </thead>
+            <tbody id="resultsBody"></tbody>
+            <tfoot>
+              <tr style="font-weight:bold; background:var(--primary-color); color:#fff;">
+                <td>TOTAL</td>
+                <td>100%</td>
+                <td id="totalWeight"></td>
+                <td>-</td>
+                <td id="totalCost"></td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div class="button-group">
+            <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
+            <button class="btn btn-success" onclick="exportResults('csv')">📊 Export CSV</button>
+            <button class="btn btn-primary" onclick="resetCalculator()">🔄 New Calculation</button>
+          </div>
+        </div>
+        <!-- ============= END steps ============= -->
+      </div>
     </div>
+  </section>
 
-    <script>
-        // Global variables
-        let currentStep = 1;
-        let calculationResults = {};
-        let currentUnits = 'kg';
-        let customIngredientCounter = { protein: 0, energy: 0, fixed: 0 };
+  <!-- ========= Scripts ========= -->
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-        // Landing page to calculator navigation
-        function startCalculator() {
-            document.getElementById('landingPage').style.display = 'none';
-            document.getElementById('calculatorPage').classList.add('active');
+    // Theme toggle (single button controls both pages)
+    function toggleTheme(){
+      const body = document.body;
+      const newTheme = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      body.setAttribute('data-theme', newTheme);
+      document.getElementById('themeText').textContent = newTheme === 'light' ? 'Dark' : 'Light';
+    }
+
+    // Page switching
+    function startCalculator(){
+      document.getElementById('landingPage').style.display = 'none';
+      document.getElementById('calculatorPage').classList.add('active');
+    }
+    function backToLanding(){
+      document.getElementById('landingPage').style.display = 'block';
+      document.getElementById('calculatorPage').classList.remove('active');
+    }
+  </script>
+
+  <!-- ========= Calculator Logic (preserved) ========= -->
+  <script>
+    // Global variables
+    let currentStep = 1;
+    let calculationResults = {};
+    let currentUnits = 'kg';
+    let customIngredientCounter = { protein: 0, energy: 0, fixed: 0 };
+
+    // Progress bar update
+    function updateProgress() {
+      const progress = (currentStep / 5) * 100;
+      const el = document.getElementById('progressFill');
+      if (el) el.style.width = progress + '%';
+    }
+
+    // Navigation functions
+    function nextStep() {
+      document.getElementById(`step${currentStep}`).classList.remove('active');
+      currentStep++;
+      if (currentStep > 5) currentStep = 5;
+      document.getElementById(`step${currentStep}`).classList.add('active');
+      updateProgress();
+    }
+    function prevStep() {
+      document.getElementById(`step${currentStep}`).classList.remove('active');
+      currentStep--;
+      if (currentStep < 1) currentStep = 1;
+      document.getElementById(`step${currentStep}`).classList.add('active');
+      updateProgress();
+    }
+    function validateCurrentStep(){ return true; } // test validation
+
+    // Custom ingredient add/remove
+    function addCustomIngredient(type){
+      const counter = ++customIngredientCounter[type];
+      const containerId = `custom${type.charAt(0).toUpperCase() + type.slice(1)}Container`;
+      const container = document.getElementById(containerId);
+      if (!container) return alert(`Container ${containerId} not found`);
+      const placeholder = container.querySelector('.custom-ingredients-placeholder');
+      if (placeholder) placeholder.remove();
+
+      const customRow = document.createElement('div');
+      customRow.className = 'ingredient-row custom-ingredient';
+      customRow.style.marginBottom = '1rem';
+      customRow.style.padding = '1rem';
+      customRow.id = `custom_${type}_${counter}`;
+
+      const placeholderText = type === 'fixed' ? 'Percentage %' : 'Protein %';
+      const labelText = type === 'fixed' ? 'Fixed Ingredient' : type.charAt(0).toUpperCase() + type.slice(1);
+
+      customRow.innerHTML = `
+        <input type="checkbox" class="checkbox" id="custom_${type}_${counter}_check" checked>
+        <input type="text" class="input-field" placeholder="Custom ${labelText} Name" id="custom_${type}_${counter}_name" style="min-width:150px;" value="Custom ${labelText} ${counter}">
+        <input type="number" class="input-field" placeholder="${placeholderText}" id="custom_${type}_${counter}_protein" step="0.1">
+        <div style="display:flex; gap:.5rem; align-items:center;">
+          <input type="number" class="input-field" placeholder="Cost/kg (₦)" id="custom_${type}_${counter}_cost" step="0.01">
+          <button type="button" class="remove-ingredient-btn" onclick="removeCustomIngredient('${type}', ${counter})" title="Remove this ingredient">×</button>
+        </div>
+      `;
+      container.appendChild(customRow);
+      customRow.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }
+    function removeCustomIngredient(type, counter){
+      const element = document.getElementById(`custom_${type}_${counter}`);
+      if (!element) return;
+      element.style.animation='fadeOut .3s ease';
+      setTimeout(()=>{
+        element.remove();
+        const containerId = `custom${type.charAt(0).toUpperCase() + type.slice(1)}Container`;
+        const container = document.getElementById(containerId);
+        if (container && container.children.length === 0) {
+          const placeholder = document.createElement('div');
+          placeholder.className='custom-ingredients-placeholder';
+          placeholder.textContent='Custom ingredients will appear here...';
+          container.appendChild(placeholder);
         }
+      }, 280);
+    }
 
-        // Theme toggle function
-        function toggleTheme() {
-            const body = document.body;
-            const themeText = document.getElementById('themeText');
-            const currentTheme = body.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            body.setAttribute('data-theme', newTheme);
-            themeText.textContent = newTheme === 'light' ? 'Dark' : 'Light';
+    // Toggles
+    function toggleFixedIngredients(){
+      const content = document.getElementById('fixedIngredientsDetails');
+      const icon = document.getElementById('toggleIcon');
+      if (!content || !icon) return;
+      content.classList.toggle('open');
+      icon.textContent = content.classList.contains('open') ? '▲' : '▼';
+    }
+    function toggleProteinSources(){
+      const content = document.getElementById('proteinSourcesDetails');
+      const icon = document.getElementById('proteinToggleIcon');
+      if (!content || !icon) return;
+      content.classList.toggle('open');
+      icon.textContent = content.classList.contains('open') ? '▲' : '▼';
+    }
+    function toggleEnergySources(){
+      const content = document.getElementById('energySourcesDetails');
+      const icon = document.getElementById('energyToggleIcon');
+      if (!content || !icon) return;
+      content.classList.toggle('open');
+      icon.textContent = content.classList.contains('open') ? '▲' : '▼';
+    }
+
+    // Means
+    function calculateMeanProtein(){
+      let total=0, count=0;
+      if (document.getElementById('fm_check').checked){ total += parseFloat(document.getElementById('fm_protein').value)||0; count++; }
+      if (document.getElementById('sbm_check').checked){ total += parseFloat(document.getElementById('sbm_protein').value)||0; count++; }
+      if (document.getElementById('gnc_check').checked){ total += parseFloat(document.getElementById('gnc_protein').value)||0; count++; }
+      for (let i=1;i<=customIngredientCounter.protein;i++){
+        const c=document.getElementById(`custom_protein_${i}_check`);
+        const p=document.getElementById(`custom_protein_${i}_protein`);
+        if (c&&c.checked&&p){ total += parseFloat(p.value)||0; count++; }
+      }
+      return count>0 ? total/count : 0;
+    }
+    function calculateMeanEnergy(){
+      let total=0, count=0;
+      if (document.getElementById('ym_check').checked){ total += parseFloat(document.getElementById('ym_protein').value)||0; count++; }
+      if (document.getElementById('wb_check').checked){ total += parseFloat(document.getElementById('wb_protein').value)||0; count++; }
+      if (document.getElementById('pkc_check').checked){ total += parseFloat(document.getElementById('pkc_protein').value)||0; count++; }
+      for (let i=1;i<=customIngredientCounter.energy;i++){
+        const c=document.getElementById(`custom_energy_${i}_check`);
+        const p=document.getElementById(`custom_energy_${i}_protein`);
+        if (c&&c.checked&&p){ total += parseFloat(p.value)||0; count++; }
+      }
+      return count>0 ? total/count : 0;
+    }
+
+    // Core calculation
+    function calculateFeed(){
+      if (!validateCurrentStep()) return;
+      const meanProtein = calculateMeanProtein();
+      const meanEnergy = calculateMeanEnergy();
+      const requiredCP = parseFloat(document.getElementById('required_cp').value);
+      const totalWeight = parseFloat(document.getElementById('total_weight').value);
+      const fixedIngredients = parseFloat(document.getElementById('total_fi').value) || 0;
+
+      const proteinDiff = Math.abs(requiredCP - meanEnergy);
+      const energyDiff = Math.abs(meanProtein - requiredCP);
+      const totalDiff = proteinDiff + energyDiff;
+
+      const remainingPercent = 100 - fixedIngredients;
+      const proteinPercent = (proteinDiff/totalDiff) * remainingPercent;
+      const energyPercent  = (energyDiff/totalDiff)  * remainingPercent;
+
+      calculationResults = {
+        meanProtein, meanEnergy, requiredCP, totalWeight,
+        fixedIngredients, remainingPercent, proteinPercent, energyPercent,
+        proteinDiff, energyDiff
+      };
+
+      document.getElementById('meanProtein').textContent = meanProtein.toFixed(2);
+      document.getElementById('meanEnergy').textContent  = meanEnergy.toFixed(2);
+      document.getElementById('proteinSource').textContent = meanProtein.toFixed(1);
+      document.getElementById('energySource').textContent  = meanEnergy.toFixed(1);
+      document.getElementById('requiredCP').textContent     = requiredCP;
+      document.getElementById('proteinDiff').textContent     = proteinDiff.toFixed(1);
+      document.getElementById('energyDiff').textContent      = energyDiff.toFixed(1);
+      document.getElementById('remainingPercent').textContent= remainingPercent.toFixed(2);
+      document.getElementById('proteinPercent').textContent  = proteinPercent.toFixed(2);
+      document.getElementById('energyPercent').textContent   = energyPercent.toFixed(2);
+
+      nextStep();
+    }
+
+    // Results
+    function generateResults(){
+      const results=[];
+      const { totalWeight, proteinPercent, energyPercent } = calculationResults;
+
+      const proteinSources=[], energySources=[];
+      if (document.getElementById('fm_check').checked){
+        proteinSources.push({ name:'Fish Meal (FM)', protein:parseFloat(document.getElementById('fm_protein').value), cost:parseFloat(document.getElementById('fm_cost').value)||0 });
+      }
+      if (document.getElementById('sbm_check').checked){
+        proteinSources.push({ name:'Soya Bean Meal (SBM)', protein:parseFloat(document.getElementById('sbm_protein').value), cost:parseFloat(document.getElementById('sbm_cost').value)||0 });
+      }
+      if (document.getElementById('gnc_check').checked){
+        proteinSources.push({ name:'Groundnut Cake (GNC)', protein:parseFloat(document.getElementById('gnc_protein').value), cost:parseFloat(document.getElementById('gnc_cost').value)||0 });
+      }
+      for (let i=1;i<=customIngredientCounter.protein;i++){
+        const c=document.getElementById(`custom_protein_${i}_check`);
+        const n=document.getElementById(`custom_protein_${i}_name`);
+        const p=document.getElementById(`custom_protein_${i}_protein`);
+        const cost=document.getElementById(`custom_protein_${i}_cost`);
+        if (c&&c.checked&&n&&p){
+          proteinSources.push({ name:n.value||`Custom Protein ${i}`, protein:parseFloat(p.value)||0, cost:parseFloat(cost.value)||0 });
         }
+      }
 
-        // Progress bar update
-        function updateProgress() {
-            const progress = (currentStep / 5) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
+      if (document.getElementById('ym_check').checked){
+        energySources.push({ name:'Yellow Maize (YM)', protein:parseFloat(document.getElementById('ym_protein').value), cost:parseFloat(document.getElementById('ym_cost').value)||0 });
+      }
+      if (document.getElementById('wb_check').checked){
+        energySources.push({ name:'Wheat Bran (WB)', protein:parseFloat(document.getElementById('wb_protein').value), cost:parseFloat(document.getElementById('wb_cost').value)||0 });
+      }
+      if (document.getElementById('pkc_check').checked){
+        energySources.push({ name:'Palm Kernel Cake (PKC)', protein:parseFloat(document.getElementById('pkc_protein').value), cost:parseFloat(document.getElementById('pkc_cost').value)||0 });
+      }
+      for (let i=1;i<=customIngredientCounter.energy;i++){
+        const c=document.getElementById(`custom_energy_${i}_check`);
+        const n=document.getElementById(`custom_energy_${i}_name`);
+        const p=document.getElementById(`custom_energy_${i}_protein`);
+        const cost=document.getElementById(`custom_energy_${i}_cost`);
+        if (c&&c.checked&&n&&p){
+          energySources.push({ name:n.value||`Custom Energy ${i}`, protein:parseFloat(p.value)||0, cost:parseFloat(cost.value)||0 });
         }
+      }
 
-        // Navigation functions
-        function nextStep() {
-            console.log('Next step clicked, current step:', currentStep);
-            
-            // TEMPORARY: Skip validation for testing
-            // if (validateCurrentStep()) {
-            if (true) {  // Always pass validation for now
-                console.log('Moving to next step');
-                document.getElementById(`step${currentStep}`).classList.remove('active');
-                currentStep++;
-                document.getElementById(`step${currentStep}`).classList.add('active');
-                updateProgress();
-                console.log('Now on step:', currentStep);
-            } else {
-                console.log('Validation failed');
-            }
+      const totalProteinWeight = (proteinPercent/100)*totalWeight;
+      const totalEnergyWeight  = (energyPercent/100)*totalWeight;
+
+      const totalProteinContribution = proteinSources.reduce((s,x)=>s+(x.protein||0),0);
+      proteinSources.forEach(src=>{
+        const proportion = totalProteinContribution ? (src.protein||0)/totalProteinContribution : 0;
+        const weight = totalProteinWeight * proportion;
+        results.push({ name:src.name, percentage:(weight/totalWeight)*100, weight, cost:src.cost||0, totalCost:(src.cost||0)*weight });
+      });
+
+      const totalEnergyContribution = energySources.reduce((s,x)=>s+(x.protein||0),0);
+      energySources.forEach(src=>{
+        const proportion = totalEnergyContribution ? (src.protein||0)/totalEnergyContribution : 0;
+        const weight = totalEnergyWeight * proportion;
+        results.push({ name:src.name, percentage:(weight/totalWeight)*100, weight, cost:src.cost||0, totalCost:(src.cost||0)*weight });
+      });
+
+      const fixed = [
+        { name:'Fish Premix', checkbox:'fi_premix_check' },
+        { name:'Methionine', checkbox:'fi_methionine_check' },
+        { name:'Lysine', checkbox:'fi_lysine_check' },
+        { name:'Binder', checkbox:'fi_binder_check' },
+        { name:'Vegetable Oil', checkbox:'fi_oil_check' },
+        { name:'Salt', checkbox:'fi_salt_check' },
+      ];
+      const fiDetailInputs=document.querySelectorAll('.fi-detail');
+      const fiCostInputs=document.querySelectorAll('.fi-cost');
+      fixed.forEach((ing, idx)=>{
+        const cb=document.getElementById(ing.checkbox);
+        const perc=parseFloat(fiDetailInputs[idx]?.value)||0;
+        const cost=parseFloat(fiCostInputs[idx]?.value)||0;
+        if (cb&&cb.checked&&perc>0){
+          const weight=(perc/100)*totalWeight;
+          results.push({name:ing.name, percentage:perc, weight, cost, totalCost:cost*weight});
         }
+      });
 
-        function prevStep() {
-            console.log('Previous step clicked, current step:', currentStep);
-            document.getElementById(`step${currentStep}`).classList.remove('active');
-            currentStep--;
-            document.getElementById(`step${currentStep}`).classList.add('active');
-            updateProgress();
-            console.log('Now on step:', currentStep);
+      for (let i=1;i<=customIngredientCounter.fixed;i++){
+        const cb=document.getElementById(`custom_fixed_${i}_check`);
+        const n=document.getElementById(`custom_fixed_${i}_name`);
+        const p=document.getElementById(`custom_fixed_${i}_protein`);
+        const cost=document.getElementById(`custom_fixed_${i}_cost`);
+        if (cb&&cb.checked&&n&&p){
+          const percentage=parseFloat(p.value)||0;
+          const weight=(percentage/100)*totalWeight;
+          results.push({ name:n.value||`Custom Fixed ${i}`, percentage, weight, cost:parseFloat(cost.value)||0, totalCost:weight*(parseFloat(cost.value)||0) });
         }
+      }
+      return results;
+    }
 
-        // Test function - bypasses all validation
-        function nextStepTest() {
-            console.log('TEST: Next step clicked, current step:', currentStep);
-            document.getElementById(`step${currentStep}`).classList.remove('active');
-            currentStep++;
-            if (currentStep > 5) currentStep = 5; // Don't go beyond step 5
-            document.getElementById(`step${currentStep}`).classList.add('active');
-            updateProgress();
-            console.log('TEST: Now on step:', currentStep);
-        }
+    function displayResults(){
+      const results = generateResults();
+      const tbody = document.getElementById('resultsBody');
+      tbody.innerHTML='';
+      let totalCost=0;
+      const multiplier = currentUnits==='g' ? 1000 : 1;
+      const unit=currentUnits;
 
-        // Step validation - simplified for testing
-        function validateCurrentStep() {
-            console.log('Validating step:', currentStep);
-            
-            // For now, always return true to test navigation
-            return true;
-        }
+      results.forEach(r=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.name}</td>
+          <td>${r.percentage.toFixed(2)}%</td>
+          <td>${(r.weight*multiplier).toFixed(2)} ${unit}</td>
+          <td>${(r.cost||0).toFixed(2)}</td>
+          <td>${(r.totalCost||0).toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+        totalCost += r.totalCost||0;
+      });
 
-        // Custom ingredient functions
-        function addCustomIngredient(type) {
-            console.log('=== ADDING CUSTOM INGREDIENT ===');
-            console.log('Type:', type);
-            
-            try {
-                const counter = ++customIngredientCounter[type];
-                console.log('Counter for', type, ':', counter);
-                
-                const containerId = `custom${type.charAt(0).toUpperCase() + type.slice(1)}Container`;
-                console.log('Looking for container ID:', containerId);
-                
-                const container = document.getElementById(containerId);
-                console.log('Container element:', container);
-                
-                if (!container) {
-                    console.error('❌ Container not found:', containerId);
-                    alert(`Error: Could not find container ${containerId}. Please check the console.`);
-                    return;
-                }
-                
-                // Remove placeholder if it exists
-                const placeholder = container.querySelector('.custom-ingredients-placeholder');
-                if (placeholder) {
-                    placeholder.remove();
-                }
-                
-                console.log('✅ Container found, creating custom row...');
-                
-                const customRow = document.createElement('div');
-                customRow.className = 'ingredient-row custom-ingredient';
-                customRow.style.marginBottom = '1rem';
-                customRow.style.padding = '1rem';
-                customRow.id = `custom_${type}_${counter}`;
-                
-                const placeholderText = type === 'fixed' ? 'Percentage %' : 'Protein %';
-                const labelText = type === 'fixed' ? 'Fixed Ingredient' : type.charAt(0).toUpperCase() + type.slice(1);
-                
-                console.log('Creating HTML for', type, 'ingredient...');
-                
-                customRow.innerHTML = `
-                    <input type="checkbox" class="checkbox" id="custom_${type}_${counter}_check" checked>
-                    <input type="text" class="input-field" placeholder="Custom ${labelText} Name" id="custom_${type}_${counter}_name" style="min-width: 150px;" value="Custom ${labelText} ${counter}">
-                    <input type="number" class="input-field" placeholder="${placeholderText}" id="custom_${type}_${counter}_protein" step="0.1">
-                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <input type="number" class="input-field" placeholder="Cost/kg (₦)" id="custom_${type}_${counter}_cost" step="0.01">
-                        <button type="button" class="remove-ingredient-btn" onclick="removeCustomIngredient('${type}', ${counter})" title="Remove this ingredient">×</button>
-                    </div>
-                `;
-                
-                console.log('Appending to container...');
-                container.appendChild(customRow);
-                
-                console.log('✅ Custom ingredient added successfully:', `custom_${type}_${counter}`);
-                console.log('Container now has', container.children.length, 'children');
-                
-                // Add visual feedback
-                customRow.style.animation = 'fadeIn 0.3s ease';
-                
-                // Scroll into view for better UX
-                customRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                
-                console.log('=== CUSTOM INGREDIENT ADDED SUCCESSFULLY ===');
-                
-            } catch (error) {
-                console.error('❌ Error adding custom ingredient:', error);
-                alert(`Error adding custom ingredient: ${error.message}`);
-            }
-        }
+      document.getElementById('totalWeight').textContent = `${(calculationResults.totalWeight*multiplier).toFixed(2)} ${unit}`;
+      document.getElementById('totalCost').textContent   = totalCost.toFixed(2);
+    }
 
-        function removeCustomIngredient(type, counter) {
-            console.log('=== REMOVING CUSTOM INGREDIENT ===');
-            console.log('Removing custom ingredient:', type, counter);
-            
-            try {
-                const element = document.getElementById(`custom_${type}_${counter}`);
-                if (element) {
-                    console.log('✅ Element found, removing...');
-                    element.style.animation = 'fadeOut 0.3s ease';
-                    setTimeout(() => {
-                        element.remove();
-                        console.log('✅ Custom ingredient removed:', `custom_${type}_${counter}`);
-                        
-                        // Check if container is empty and add placeholder back
-                        const containerId = `custom${type.charAt(0).toUpperCase() + type.slice(1)}Container`;
-                        const container = document.getElementById(containerId);
-                        if (container && container.children.length === 0) {
-                            const placeholder = document.createElement('div');
-                            placeholder.className = 'custom-ingredients-placeholder';
-                            placeholder.textContent = 'Custom ingredients will appear here...';
-                            container.appendChild(placeholder);
-                        }
-                    }, 300);
-                } else {
-                    console.log('❌ Element not found for removal:', `custom_${type}_${counter}`);
-                }
-            } catch (error) {
-                console.error('❌ Error removing custom ingredient:', error);
-            }
-        }
+    function updateUnits(){
+      const selected = document.querySelector('input[name="units"]:checked').value;
+      currentUnits = selected;
+      displayResults();
+    }
 
-        // Test function for adding custom fixed ingredients
-        function testAddCustomFixed() {
-            console.log('=== TESTING CUSTOM FIXED INGREDIENT ===');
-            console.log('customIngredientCounter:', customIngredientCounter);
-            
-            const container = document.getElementById('customFixedContainer');
-            console.log('customFixedContainer exists:', !!container);
-            
-            if (container) {
-                console.log('Container innerHTML:', container.innerHTML);
-                console.log('Container children count:', container.children.length);
-            }
-            
-            // Try to add one
-            addCustomIngredient('fixed');
-        }
+    // Export CSV
+    function exportResults(format){
+      const results = generateResults();
+      if (format==='csv') exportToCSV(results);
+    }
+    function exportToCSV(results){
+      const multiplier = currentUnits==='g'?1000:1;
+      const headers=['Ingredient','Percentage (%)',`Weight (${currentUnits})`,'Cost per Unit (₦)','Total Cost (₦)'];
+      let csv = headers.join(',') + '\n';
+      results.forEach(r=>{
+        csv += [
+          r.name,
+          r.percentage.toFixed(2),
+          (r.weight*multiplier).toFixed(2),
+          (r.cost||0).toFixed(2),
+          (r.totalCost||0).toFixed(2)
+        ].join(',') + '\n';
+      });
+      const totalCost = results.reduce((s,r)=>s+(r.totalCost||0),0);
+      csv += ['TOTAL','100.00',(calculationResults.totalWeight*multiplier).toFixed(2),'-',totalCost.toFixed(2)].join(',') + '\n';
 
-        // Toggle functions
-        function toggleFixedIngredients() {
-            console.log('Toggle fixed ingredients clicked');
-            const content = document.getElementById('fixedIngredientsDetails');
-            const icon = document.getElementById('toggleIcon');
-            
-            if (content && icon) {
-                content.classList.toggle('open');
-                icon.textContent = content.classList.contains('open') ? '▲' : '▼';
-                console.log('Fixed ingredients toggled, now open:', content.classList.contains('open'));
-            } else {
-                console.log('Could not find fixed ingredients elements');
-            }
-        }
+      const blob = new Blob([csv],{type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href=url; a.download=`fish_feed_formulation_${new Date().toISOString().split('T')[0]}.csv`; a.click();
+      URL.revokeObjectURL(url);
+    }
 
-        function toggleProteinSources() {
-            console.log('Toggle protein sources clicked');
-            const content = document.getElementById('proteinSourcesDetails');
-            const icon = document.getElementById('proteinToggleIcon');
-            
-            if (content && icon) {
-                content.classList.toggle('open');
-                icon.textContent = content.classList.contains('open') ? '▲' : '▼';
-                console.log('Protein sources toggled, now open:', content.classList.contains('open'));
-            } else {
-                console.log('Could not find protein sources elements');
-            }
-        }
+    // Reset
+    function resetCalculator(){
+      currentStep=1;
+      document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+      document.getElementById('step1').classList.add('active');
 
-        function toggleEnergySources() {
-            console.log('Toggle energy sources clicked');
-            const content = document.getElementById('energySourcesDetails');
-            const icon = document.getElementById('energyToggleIcon');
-            
-            if (content && icon) {
-                content.classList.toggle('open');
-                icon.textContent = content.classList.contains('open') ? '▲' : '▼';
-                console.log('Energy sources toggled, now open:', content.classList.contains('open'));
-            } else {
-                console.log('Could not find energy sources elements');
-            }
-        }
+      document.querySelectorAll('input').forEach(input=>{
+        if (input.type==='checkbox') input.checked=false;
+        else if (input.type==='number'||input.type==='text') input.value='';
+      });
+      document.getElementById('customProteinContainer').innerHTML='';
+      document.getElementById('customEnergyContainer').innerHTML='';
+      const cf=document.getElementById('customFixedContainer');
+      cf.innerHTML='<div class="custom-ingredients-placeholder">Custom ingredients will appear here...</div>';
+      customIngredientCounter={protein:0, energy:0, fixed:0};
+      calculationResults={};
+      updateProgress();
+    }
 
-        // Calculation functions
-        function calculateMeanProtein() {
-            let totalProtein = 0;
-            let count = 0;
-            
-            if (document.getElementById('fm_check').checked) {
-                totalProtein += parseFloat(document.getElementById('fm_protein').value) || 0;
-                count++;
-            }
-            if (document.getElementById('sbm_check').checked) {
-                totalProtein += parseFloat(document.getElementById('sbm_protein').value) || 0;
-                count++;
-            }
-            if (document.getElementById('gnc_check').checked) {
-                totalProtein += parseFloat(document.getElementById('gnc_protein').value) || 0;
-                count++;
-            }
-            
-            for (let i = 1; i <= customIngredientCounter.protein; i++) {
-                const checkbox = document.getElementById(`custom_protein_${i}_check`);
-                const proteinInput = document.getElementById(`custom_protein_${i}_protein`);
-                if (checkbox && checkbox.checked && proteinInput) {
-                    totalProtein += parseFloat(proteinInput.value) || 0;
-                    count++;
-                }
-            }
-            
-            return count > 0 ? totalProtein / count : 0;
-        }
+    // Live validation for fixed totals
+    document.addEventListener('input', function(e){
+      if (!e.target.classList.contains('fi-detail')) return;
+      const fiInputs=document.querySelectorAll('.fi-detail');
+      const totalFI=parseFloat(document.getElementById('total_fi').value)||0;
+      let sum=0;
 
-        function calculateMeanEnergy() {
-            let totalEnergy = 0;
-            let count = 0;
-            
-            if (document.getElementById('ym_check').checked) {
-                totalEnergy += parseFloat(document.getElementById('ym_protein').value) || 0;
-                count++;
-            }
-            if (document.getElementById('wb_check').checked) {
-                totalEnergy += parseFloat(document.getElementById('wb_protein').value) || 0;
-                count++;
-            }
-            if (document.getElementById('pkc_check').checked) {
-                totalEnergy += parseFloat(document.getElementById('pkc_protein').value) || 0;
-                count++;
-            }
-            
-            for (let i = 1; i <= customIngredientCounter.energy; i++) {
-                const checkbox = document.getElementById(`custom_energy_${i}_check`);
-                const proteinInput = document.getElementById(`custom_energy_${i}_protein`);
-                if (checkbox && checkbox.checked && proteinInput) {
-                    totalEnergy += parseFloat(proteinInput.value) || 0;
-                    count++;
-                }
-            }
-            
-            return count > 0 ? totalEnergy / count : 0;
-        }
+      fiInputs.forEach((input, idx)=>{
+        const checks=document.querySelectorAll('#fixedIngredientsDetails .checkbox');
+        const cb=checks[idx];
+        if (cb && cb.checked) sum += parseFloat(input.value)||0;
+      });
+      for (let i=1;i<=customIngredientCounter.fixed;i++){
+        const cb=document.getElementById(`custom_fixed_${i}_check`);
+        const p=document.getElementById(`custom_fixed_${i}_protein`);
+        if (cb&&cb.checked&&p) sum += parseFloat(p.value)||0;
+      }
 
-        function calculateFeed() {
-            if (!validateCurrentStep()) return;
-            
-            const meanProtein = calculateMeanProtein();
-            const meanEnergy = calculateMeanEnergy();
-            const requiredCP = parseFloat(document.getElementById('required_cp').value);
-            const totalWeight = parseFloat(document.getElementById('total_weight').value);
-            const fixedIngredients = parseFloat(document.getElementById('total_fi').value) || 0;
-            
-            const proteinDiff = Math.abs(requiredCP - meanEnergy);
-            const energyDiff = Math.abs(meanProtein - requiredCP);
-            const totalDiff = proteinDiff + energyDiff;
-            
-            const remainingPercent = 100 - fixedIngredients;
-            const proteinPercent = (proteinDiff / totalDiff) * remainingPercent;
-            const energyPercent = (energyDiff / totalDiff) * remainingPercent;
-            
-            calculationResults = {
-                meanProtein,
-                meanEnergy,
-                requiredCP,
-                totalWeight,
-                fixedIngredients,
-                remainingPercent,
-                proteinPercent,
-                energyPercent,
-                proteinDiff,
-                energyDiff
-            };
-            
-            document.getElementById('meanProtein').textContent = meanProtein.toFixed(2);
-            document.getElementById('meanEnergy').textContent = meanEnergy.toFixed(2);
-            document.getElementById('proteinSource').textContent = meanProtein.toFixed(1);
-            document.getElementById('energySource').textContent = meanEnergy.toFixed(1);
-            document.getElementById('requiredCP').textContent = requiredCP;
-            document.getElementById('proteinDiff').textContent = proteinDiff.toFixed(1);
-            document.getElementById('energyDiff').textContent = energyDiff.toFixed(1);
-            document.getElementById('remainingPercent').textContent = remainingPercent.toFixed(2);
-            document.getElementById('proteinPercent').textContent = proteinPercent.toFixed(2);
-            document.getElementById('energyPercent').textContent = energyPercent.toFixed(2);
-            
-            nextStep();
-        }
+      const v=document.getElementById('fiValidation');
+      if (Math.abs(sum-totalFI) < .01){
+        v.innerHTML = `<strong>✅ Perfect!</strong> Selected ingredients sum: ${sum.toFixed(2)}% matches total: ${totalFI}%`;
+        v.className='success-message';
+        v.style.cssText='display:block;padding:10px;border:2px solid var(--success-color);border-radius:6px;background:rgba(16,185,129,.1)';
+      } else {
+        v.innerHTML = `<strong>⚠️ Check totals:</strong> Selected sum: ${sum.toFixed(2)}% | Target: ${totalFI}% | Difference: ${Math.abs(sum-totalFI).toFixed(2)}%`;
+        v.className='error-message';
+        v.style.cssText='display:block;padding:10px;border:2px solid var(--error-color);border-radius:6px;background:rgba(239,68,68,.1)';
+      }
+    });
 
-        // Results functions
-        function generateResults() {
-            const results = [];
-            const { totalWeight, proteinPercent, energyPercent } = calculationResults;
-            
-            const proteinSources = [];
-            const energySources = [];
-            
-            if (document.getElementById('fm_check').checked) {
-                proteinSources.push({
-                    name: 'Fish Meal (FM)',
-                    protein: parseFloat(document.getElementById('fm_protein').value),
-                    cost: parseFloat(document.getElementById('fm_cost').value) || 0
-                });
-            }
-            if (document.getElementById('sbm_check').checked) {
-                proteinSources.push({
-                    name: 'Soya Bean Meal (SBM)',
-                    protein: parseFloat(document.getElementById('sbm_protein').value),
-                    cost: parseFloat(document.getElementById('sbm_cost').value) || 0
-                });
-            }
-            if (document.getElementById('gnc_check').checked) {
-                proteinSources.push({
-                    name: 'Groundnut Cake (GNC)',
-                    protein: parseFloat(document.getElementById('gnc_protein').value),
-                    cost: parseFloat(document.getElementById('gnc_cost').value) || 0
-                });
-            }
-            
-            for (let i = 1; i <= customIngredientCounter.protein; i++) {
-                const checkbox = document.getElementById(`custom_protein_${i}_check`);
-                const nameInput = document.getElementById(`custom_protein_${i}_name`);
-                const proteinInput = document.getElementById(`custom_protein_${i}_protein`);
-                const costInput = document.getElementById(`custom_protein_${i}_cost`);
-                
-                if (checkbox && checkbox.checked && nameInput && proteinInput) {
-                    proteinSources.push({
-                        name: nameInput.value || `Custom Protein ${i}`,
-                        protein: parseFloat(proteinInput.value) || 0,
-                        cost: parseFloat(costInput.value) || 0
-                    });
-                }
-            }
-            
-            if (document.getElementById('ym_check').checked) {
-                energySources.push({
-                    name: 'Yellow Maize (YM)',
-                    protein: parseFloat(document.getElementById('ym_protein').value),
-                    cost: parseFloat(document.getElementById('ym_cost').value) || 0
-                });
-            }
-            if (document.getElementById('wb_check').checked) {
-                energySources.push({
-                    name: 'Wheat Bran (WB)',
-                    protein: parseFloat(document.getElementById('wb_protein').value),
-                    cost: parseFloat(document.getElementById('wb_cost').value) || 0
-                });
-            }
-            if (document.getElementById('pkc_check').checked) {
-                energySources.push({
-                    name: 'Palm Kernel Cake (PKC)',
-                    protein: parseFloat(document.getElementById('pkc_protein').value),
-                    cost: parseFloat(document.getElementById('pkc_cost').value) || 0
-                });
-            }
-            
-            for (let i = 1; i <= customIngredientCounter.energy; i++) {
-                const checkbox = document.getElementById(`custom_energy_${i}_check`);
-                const nameInput = document.getElementById(`custom_energy_${i}_name`);
-                const proteinInput = document.getElementById(`custom_energy_${i}_protein`);
-                const costInput = document.getElementById(`custom_energy_${i}_cost`);
-                
-                if (checkbox && checkbox.checked && nameInput && proteinInput) {
-                    energySources.push({
-                        name: nameInput.value || `Custom Energy ${i}`,
-                        protein: parseFloat(proteinInput.value) || 0,
-                        cost: parseFloat(costInput.value) || 0
-                    });
-                }
-            }
-            
-            const totalProteinWeight = (proteinPercent / 100) * totalWeight;
-            const totalEnergyWeight = (energyPercent / 100) * totalWeight;
-            
-            const totalProteinContribution = proteinSources.reduce((sum, source) => sum + source.protein, 0);
-            
-            proteinSources.forEach(source => {
-                const proportion = source.protein / totalProteinContribution;
-                const weight = totalProteinWeight * proportion;
-                results.push({
-                    name: source.name,
-                    percentage: (weight / totalWeight) * 100,
-                    weight: weight,
-                    cost: source.cost,
-                    totalCost: weight * source.cost
-                });
-            });
-            
-            const totalEnergyContribution = energySources.reduce((sum, source) => sum + source.protein, 0);
-            
-            energySources.forEach(source => {
-                const proportion = source.protein / totalEnergyContribution;
-                const weight = totalEnergyWeight * proportion;
-                results.push({
-                    name: source.name,
-                    percentage: (weight / totalWeight) * 100,
-                    weight: weight,
-                    cost: source.cost,
-                    totalCost: weight * source.cost
-                });
-            });
-            
-            const fixedIngredientsData = [
-                { name: 'Fish Premix', checkbox: 'fi_premix_check' },
-                { name: 'Methionine', checkbox: 'fi_methionine_check' },
-                { name: 'Lysine', checkbox: 'fi_lysine_check' },
-                { name: 'Binder', checkbox: 'fi_binder_check' },
-                { name: 'Vegetable Oil', checkbox: 'fi_oil_check' },
-                { name: 'Salt', checkbox: 'fi_salt_check' }
-            ];
-            
-            const fiDetailInputs = document.querySelectorAll('.fi-detail');
-            const fiCostInputs = document.querySelectorAll('.fi-cost');
-            
-            fixedIngredientsData.forEach((ingredient, index) => {
-                const checkbox = document.getElementById(ingredient.checkbox);
-                const percentage = parseFloat(fiDetailInputs[index]?.value) || 0;
-                const cost = parseFloat(fiCostInputs[index]?.value) || 0;
-                
-                if (checkbox && checkbox.checked && percentage > 0) {
-                    const weight = (percentage / 100) * totalWeight;
-                    results.push({
-                        name: ingredient.name,
-                        percentage: percentage,
-                        weight: weight,
-                        cost: cost,
-                        totalCost: weight * cost
-                    });
-                }
-            });
-            
-            for (let i = 1; i <= customIngredientCounter.fixed; i++) {
-                const checkbox = document.getElementById(`custom_fixed_${i}_check`);
-                const nameInput = document.getElementById(`custom_fixed_${i}_name`);
-                const proteinInput = document.getElementById(`custom_fixed_${i}_protein`);
-                const costInput = document.getElementById(`custom_fixed_${i}_cost`);
-                
-                if (checkbox && checkbox.checked && nameInput && proteinInput) {
-                    const percentage = parseFloat(proteinInput.value) || 0;
-                    const weight = (percentage / 100) * totalWeight;
-                    results.push({
-                        name: nameInput.value || `Custom Fixed ${i}`,
-                        percentage: percentage,
-                        weight: weight,
-                        cost: parseFloat(costInput.value) || 0,
-                        totalCost: weight * (parseFloat(costInput.value) || 0)
-                    });
-                }
-            }
-            
-            return results;
-        }
+    // Boot
+    document.addEventListener('DOMContentLoaded', function(){
+      document.getElementById('year').textContent = new Date().getFullYear();
+      updateProgress();
 
-        function displayResults() {
-            const results = generateResults();
-            const tbody = document.getElementById('resultsBody');
-            tbody.innerHTML = '';
-            
-            let totalCost = 0;
-            const weightUnit = currentUnits;
-            const multiplier = currentUnits === 'g' ? 1000 : 1;
-            
-            results.forEach(result => {
-                const row = tbody.insertRow();
-                row.innerHTML = `
-                    <td>${result.name}</td>
-                    <td>${result.percentage.toFixed(2)}%</td>
-                    <td>${(result.weight * multiplier).toFixed(2)} ${weightUnit}</td>
-                    <td>${result.cost.toFixed(2)}</td>
-                    <td>${result.totalCost.toFixed(2)}</td>
-                `;
-                totalCost += result.totalCost;
-            });
-            
-            document.getElementById('totalWeight').textContent = 
-                `${(calculationResults.totalWeight * multiplier).toFixed(2)} ${weightUnit}`;
-            document.getElementById('totalCost').textContent = totalCost.toFixed(2);
-        }
-
-        function updateUnits() {
-            const selectedUnit = document.querySelector('input[name="units"]:checked').value;
-            currentUnits = selectedUnit;
-            displayResults();
-        }
-
-        // Export functions
-        function exportResults(format) {
-            const results = generateResults();
-            if (format === 'csv') {
-                exportToCSV(results);
-            }
-        }
-
-        function exportToCSV(results) {
-            const multiplier = currentUnits === 'g' ? 1000 : 1;
-            const headers = ['Ingredient', 'Percentage (%)', `Weight (${currentUnits})`, 'Cost per Unit (₦)', 'Total Cost (₦)'];
-            
-            let csvContent = headers.join(',') + '\n';
-            
-            results.forEach(result => {
-                const row = [
-                    result.name,
-                    result.percentage.toFixed(2),
-                    (result.weight * multiplier).toFixed(2),
-                    result.cost.toFixed(2),
-                    result.totalCost.toFixed(2)
-                ];
-                csvContent += row.join(',') + '\n';
-            });
-            
-            const totalCost = results.reduce((sum, result) => sum + result.totalCost, 0);
-            const totalRow = [
-                'TOTAL',
-                '100.00',
-                (calculationResults.totalWeight * multiplier).toFixed(2),
-                '-',
-                totalCost.toFixed(2)
-            ];
-            csvContent += totalRow.join(',') + '\n';
-            
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `fish_feed_formulation_${new Date().toISOString().split('T')[0]}.csv`;
-            a.click();
-            window.URL.revokeObjectURL(url);
-        }
-
-        // Reset function
-        function resetCalculator() {
-            currentStep = 1;
-            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
-            document.getElementById('step1').classList.add('active');
-            
-            document.querySelectorAll('input').forEach(input => {
-                if (input.type === 'checkbox') {
-                    input.checked = false;
-                } else if (input.type === 'number' || input.type === 'text') {
-                    input.value = '';
-                }
-            });
-            
-            document.getElementById('customProteinContainer').innerHTML = '';
-            document.getElementById('customEnergyContainer').innerHTML = '';
-            
-            // Reset custom fixed container with placeholder
-            const customFixedContainer = document.getElementById('customFixedContainer');
-            customFixedContainer.innerHTML = '<div class="custom-ingredients-placeholder">Custom ingredients will appear here...</div>';
-            
-            customIngredientCounter = { protein: 0, energy: 0, fixed: 0 };
-            calculationResults = {};
-            
-            updateProgress();
-        }
-
-        // Event listeners
-        document.addEventListener('input', function(e) {
-            if (e.target.classList.contains('fi-detail')) {
-                const fiInputs = document.querySelectorAll('.fi-detail');
-                const totalFI = parseFloat(document.getElementById('total_fi').value) || 0;
-                let sum = 0;
-                
-                fiInputs.forEach((input, index) => {
-                    const checkboxes = document.querySelectorAll('#fixedIngredientsDetails .checkbox');
-                    const checkbox = checkboxes[index];
-                    if (checkbox && checkbox.checked) {
-                        sum += parseFloat(input.value) || 0;
-                    }
-                });
-                
-                for (let i = 1; i <= customIngredientCounter.fixed; i++) {
-                    const checkbox = document.getElementById(`custom_fixed_${i}_check`);
-                    const proteinInput = document.getElementById(`custom_fixed_${i}_protein`);
-                    if (checkbox && checkbox.checked && proteinInput) {
-                        sum += parseFloat(proteinInput.value) || 0;
-                    }
-                }
-                
-                const validation = document.getElementById('fiValidation');
-                if (Math.abs(sum - totalFI) < 0.01) {
-                    validation.innerHTML = `<strong>✅ Perfect!</strong> Selected ingredients sum: ${sum.toFixed(2)}% matches total: ${totalFI}%`;
-                    validation.className = 'success-message';
-                    validation.style.borderColor = 'var(--success-color)';
-                    validation.style.background = 'rgba(16, 185, 129, 0.1)';
-                } else {
-                    validation.innerHTML = `<strong>⚠️ Check totals:</strong> Selected sum: ${sum.toFixed(2)}% | Target: ${totalFI}% | Difference: ${Math.abs(sum - totalFI).toFixed(2)}%`;
-                    validation.className = 'error-message';
-                    validation.style.borderColor = 'var(--error-color)';
-                    validation.style.background = 'rgba(239, 68, 68, 0.1)';
-                }
-                validation.style.display = 'block';
-                validation.style.padding = '10px';
-                validation.style.borderWidth = '2px';
-                validation.style.borderStyle = 'solid';
-                validation.style.borderRadius = '6px';
-            }
+      // When step5 becomes active, render results
+      const observer = new MutationObserver((muts)=>{
+        muts.forEach(m=>{
+          if (m.target.id==='step5' && m.target.classList.contains('active')) displayResults();
         });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Page loaded successfully!');
-            console.log('Current step on load:', currentStep);
-            updateProgress();
-            
-            // Test if functions are accessible
-            console.log('nextStep function exists:', typeof nextStep);
-            console.log('validateCurrentStep function exists:', typeof validateCurrentStep);
-            console.log('addCustomIngredient function exists:', typeof addCustomIngredient);
-            console.log('toggleFixedIngredients function exists:', typeof toggleFixedIngredients);
-            
-            // Test if important elements exist
-            console.log('fixedIngredientsDetails exists:', !!document.getElementById('fixedIngredientsDetails'));
-            console.log('customFixedContainer exists:', !!document.getElementById('customFixedContainer'));
-            console.log('toggleIcon exists:', !!document.getElementById('toggleIcon'));
-            
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.target.id === 'step5' && mutation.target.classList.contains('active')) {
-                        displayResults();
-                    }
-                });
-            });
-            
-            observer.observe(document.getElementById('step5'), {
-                attributes: true,
-                attributeFilter: ['class']
-            });
-        });
-    </script>
+      });
+      observer.observe(document.getElementById('step5'), { attributes:true, attributeFilter:['class'] });
+    });
+  </script>
 </body>
 </html>
