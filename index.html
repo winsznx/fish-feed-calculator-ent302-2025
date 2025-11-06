@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Fish Feed Software Development Calculator</title>
 
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
     /* ============ Base / Theme Tokens ============ */
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -214,6 +217,19 @@
       .button-group{ flex-direction:column; }
       .btn{ width:100%; justify-content:center; }
     }
+
+    /* ============ Lucide Icon Styles ============ */
+    .lucide {
+      width: 1em;
+      height: 1em;
+      display: inline-block;
+      vertical-align: middle;
+      stroke-width: 2;
+    }
+    .btn .lucide {
+      width: 1.1em;
+      height: 1.1em;
+    }
   </style>
 </head>
 
@@ -227,6 +243,7 @@
 
   <!-- Theme toggle (single source of truth) -->
   <button class="theme-toggle" onclick="toggleTheme()">
+    <i data-lucide="moon" id="themeIcon"></i>
     <span id="themeText">Dark</span>
   </button>
 
@@ -241,7 +258,7 @@
       <a href="#authors">Authors</a>
       <a href="#contact">Contact</a>
     </nav>
-    <button class="btn btn-primary" onclick="startCalculator()">▶ Start Calculator</button>
+    <button class="btn btn-primary" onclick="startCalculator()"><i data-lucide="play"></i> Start Calculator</button>
   </header>
 
   <!-- ========= Landing Page ========= -->
@@ -258,11 +275,11 @@
           <strong>Cost of Production</strong> for aquaculture feed with an intuitive, step-by-step wizard.
         </p>
         <div style="display:flex; gap:.75rem; flex-wrap:wrap; margin-top:16px;">
-          <button class="btn btn-primary" onclick="startCalculator()">▶ Start Calculator</button>
-          <a class="btn btn-outline" href="#features">Learn more →</a>
+          <button class="btn btn-primary" onclick="startCalculator()"><i data-lucide="play"></i> Start Calculator</button>
+          <a class="btn btn-outline" href="#features">Learn more <i data-lucide="arrow-right"></i></a>
         </div>
         <div style="display:flex; gap:1rem; margin-top:10px; color:var(--text-secondary); font-size:.9rem;">
-          <span>✅ Offline-friendly</span><span>⚡ Fast & intuitive</span>
+          <span><i data-lucide="check-circle"></i> Offline-friendly</span><span><i data-lucide="zap"></i> Fast & intuitive</span>
         </div>
       </div>
 
@@ -360,7 +377,7 @@
           <a class="btn btn-outline" href="mailto:osmorakinyo@futa.edu.ng" style="text-align:center;">osmorakinyo@futa.edu.ng</a>
         </div>
         <div style="text-align:center; margin-top:14px;">
-          <button class="btn btn-primary" onclick="startCalculator()">▶ Start Calculator</button>
+          <button class="btn btn-primary" onclick="startCalculator()"><i data-lucide="play"></i> Start Calculator</button>
         </div>
       </div>
     </section>
@@ -375,7 +392,7 @@
     <div class="container">
       <!-- Top controls (only Back button – removed duplicate theme button) -->
       <div style="display:flex; justify-content:space-between; align-items:center; gap:.75rem; padding-top:6px;">
-        <button class="btn btn-outline" onclick="backToLanding()">← Back to Landing</button>
+        <button class="btn btn-outline" onclick="backToLanding()"><i data-lucide="arrow-left"></i> Back to Landing</button>
       </div>
 
       <div class="wizard-container" style="margin-top:12px;">
@@ -391,7 +408,7 @@
           <div class="ingredient-group">
             <div class="group-header" onclick="toggleProteinSources()">
               <span>Protein Sources</span>
-              <span id="proteinToggleIcon">▼</span>
+              <span id="proteinToggleIcon"><i data-lucide="chevron-down"></i></span>
             </div>
             <div class="group-content toggle-content open" id="proteinSourcesDetails">
               <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
@@ -421,7 +438,7 @@
           <div class="ingredient-group">
             <div class="group-header" onclick="toggleEnergySources()">
               <span>Energy Sources</span>
-              <span id="energyToggleIcon">▼</span>
+              <span id="energyToggleIcon"><i data-lucide="chevron-down"></i></span>
             </div>
             <div class="group-content toggle-content open" id="energySourcesDetails">
               <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
@@ -449,7 +466,7 @@
 
           <div class="button-group">
             <div></div>
-            <button class="btn btn-primary" onclick="nextStep()">Next Step →</button>
+            <button class="btn btn-primary" onclick="nextStep()">Next Step <i data-lucide="arrow-right"></i></button>
           </div>
         </div>
 
@@ -460,7 +477,7 @@
           <div class="ingredient-group">
             <div class="group-header" onclick="toggleFixedIngredients()">
               <span>Fixed Ingredients (Total %)</span>
-              <span id="toggleIcon">▼</span>
+              <span id="toggleIcon"><i data-lucide="chevron-down"></i></span>
             </div>
             <div class="group-content">
               <div class="ingredient-row">
@@ -473,49 +490,49 @@
               <div class="toggle-content open" id="fixedIngredientsDetails">
                 <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
                   <input type="checkbox" class="checkbox" id="fi_premix_check">
-                  <label><strong>🟡 Fish Premix (%)</strong></label>
+                  <label><strong><i data-lucide="beaker"></i> Fish Premix (%)</strong></label>
                   <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
                   <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
                 </div>
 
                 <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
                   <input type="checkbox" class="checkbox" id="fi_methionine_check">
-                  <label><strong>🧪 Methionine (%)</strong></label>
+                  <label><strong><i data-lucide="pill"></i> Methionine (%)</strong></label>
                   <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
                   <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
                 </div>
 
                 <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
                   <input type="checkbox" class="checkbox" id="fi_lysine_check">
-                  <label><strong>🧪 Lysine (%)</strong></label>
+                  <label><strong><i data-lucide="pill"></i> Lysine (%)</strong></label>
                   <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
                   <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
                 </div>
 
                 <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
                   <input type="checkbox" class="checkbox" id="fi_binder_check">
-                  <label><strong>🔗 Binder (%)</strong></label>
+                  <label><strong><i data-lucide="link"></i> Binder (%)</strong></label>
                   <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
                   <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
                 </div>
 
                 <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
                   <input type="checkbox" class="checkbox" id="fi_oil_check">
-                  <label><strong>🫒 Vegetable Oil (%)</strong></label>
+                  <label><strong><i data-lucide="droplet"></i> Vegetable Oil (%)</strong></label>
                   <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
                   <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
                 </div>
 
                 <div class="ingredient-row" style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:.5rem;">
                   <input type="checkbox" class="checkbox" id="fi_salt_check">
-                  <label><strong>🧂 Salt (%)</strong></label>
+                  <label><strong><i data-lucide="package"></i> Salt (%)</strong></label>
                   <input type="number" class="input-field fi-detail" placeholder="%" step="0.1">
                   <input type="number" class="input-field fi-cost" placeholder="Cost/kg (₦)" step="0.01">
                 </div>
 
                 <!-- Custom Fixed Ingredients -->
                 <div class="custom-ingredients-section">
-                  <div class="custom-ingredients-header"><span>🔧</span><span>Custom Fixed Ingredients</span></div>
+                  <div class="custom-ingredients-header"><span><i data-lucide="wrench"></i></span><span>Custom Fixed Ingredients</span></div>
                   <div id="customFixedContainer" class="custom-ingredients-container">
                     <div class="custom-ingredients-placeholder">Custom ingredients will appear here...</div>
                   </div>
@@ -528,8 +545,8 @@
           </div>
 
           <div class="button-group">
-            <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
-            <button class="btn btn-primary" onclick="nextStep()">Next Step →</button>
+            <button class="btn btn-secondary" onclick="prevStep()"><i data-lucide="arrow-left"></i> Previous</button>
+            <button class="btn btn-primary" onclick="nextStep()">Next Step <i data-lucide="arrow-right"></i></button>
           </div>
         </div>
 
@@ -537,7 +554,7 @@
         <div class="step" id="step3">
           <h2 class="step-title">Step 3: Feed Requirements</h2>
           <div class="ingredient-group">
-            <div class="group-header"><span>Feed Specifications</span><span>🎯</span></div>
+            <div class="group-header"><span>Feed Specifications</span><span><i data-lucide="target"></i></span></div>
             <div class="group-content">
               <div class="ingredient-row">
                 <span></span>
@@ -555,8 +572,8 @@
           </div>
 
           <div class="button-group">
-            <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
-            <button class="btn btn-primary" onclick="calculateFeed()">Calculate Feed →</button>
+            <button class="btn btn-secondary" onclick="prevStep()"><i data-lucide="arrow-left"></i> Previous</button>
+            <button class="btn btn-primary" onclick="calculateFeed()">Calculate Feed <i data-lucide="calculator"></i></button>
           </div>
         </div>
 
@@ -588,8 +605,8 @@
           </div>
 
           <div class="button-group">
-            <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
-            <button class="btn btn-primary" onclick="nextStep()">View Results →</button>
+            <button class="btn btn-secondary" onclick="prevStep()"><i data-lucide="arrow-left"></i> Previous</button>
+            <button class="btn btn-primary" onclick="nextStep()">View Results <i data-lucide="arrow-right"></i></button>
           </div>
         </div>
 
@@ -626,9 +643,9 @@
           </table>
 
           <div class="button-group">
-            <button class="btn btn-secondary" onclick="prevStep()">← Previous</button>
-            <button class="btn btn-success" onclick="exportResults('csv')">📊 Export CSV</button>
-            <button class="btn btn-primary" onclick="resetCalculator()">🔄 New Calculation</button>
+            <button class="btn btn-secondary" onclick="prevStep()"><i data-lucide="arrow-left"></i> Previous</button>
+            <button class="btn btn-success" onclick="exportResults('csv')"><i data-lucide="download"></i> Export CSV</button>
+            <button class="btn btn-primary" onclick="resetCalculator()"><i data-lucide="refresh-cw"></i> New Calculation</button>
           </div>
         </div>
         <!-- ============= END steps ============= -->
@@ -647,16 +664,20 @@
       const newTheme = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
       body.setAttribute('data-theme', newTheme);
       document.getElementById('themeText').textContent = newTheme === 'light' ? 'Dark' : 'Light';
+      document.getElementById('themeIcon').setAttribute('data-lucide', newTheme === 'light' ? 'moon' : 'sun');
+      lucide.createIcons();
     }
 
     // Page switching
     function startCalculator(){
       document.getElementById('landingPage').style.display = 'none';
       document.getElementById('calculatorPage').classList.add('active');
+      lucide.createIcons();
     }
     function backToLanding(){
       document.getElementById('landingPage').style.display = 'block';
       document.getElementById('calculatorPage').classList.remove('active');
+      lucide.createIcons();
     }
   </script>
 
@@ -721,6 +742,7 @@
       `;
       container.appendChild(customRow);
       customRow.scrollIntoView({ behavior:'smooth', block:'nearest' });
+      lucide.createIcons();
     }
     function removeCustomIngredient(type, counter){
       const element = document.getElementById(`custom_${type}_${counter}`);
@@ -745,21 +767,24 @@
       const icon = document.getElementById('toggleIcon');
       if (!content || !icon) return;
       content.classList.toggle('open');
-      icon.textContent = content.classList.contains('open') ? '▲' : '▼';
+      icon.innerHTML = content.classList.contains('open') ? '<i data-lucide="chevron-up"></i>' : '<i data-lucide="chevron-down"></i>';
+      lucide.createIcons();
     }
     function toggleProteinSources(){
       const content = document.getElementById('proteinSourcesDetails');
       const icon = document.getElementById('proteinToggleIcon');
       if (!content || !icon) return;
       content.classList.toggle('open');
-      icon.textContent = content.classList.contains('open') ? '▲' : '▼';
+      icon.innerHTML = content.classList.contains('open') ? '<i data-lucide="chevron-up"></i>' : '<i data-lucide="chevron-down"></i>';
+      lucide.createIcons();
     }
     function toggleEnergySources(){
       const content = document.getElementById('energySourcesDetails');
       const icon = document.getElementById('energyToggleIcon');
       if (!content || !icon) return;
       content.classList.toggle('open');
-      icon.textContent = content.classList.contains('open') ? '▲' : '▼';
+      icon.innerHTML = content.classList.contains('open') ? '<i data-lucide="chevron-up"></i>' : '<i data-lucide="chevron-down"></i>';
+      lucide.createIcons();
     }
 
     // Means
@@ -996,6 +1021,7 @@
       customIngredientCounter={protein:0, energy:0, fixed:0};
       calculationResults={};
       updateProgress();
+      lucide.createIcons();
     }
 
     // Live validation for fixed totals
@@ -1018,20 +1044,24 @@
 
       const v=document.getElementById('fiValidation');
       if (Math.abs(sum-totalFI) < .01){
-        v.innerHTML = `<strong>✅ Perfect!</strong> Selected ingredients sum: ${sum.toFixed(2)}% matches total: ${totalFI}%`;
+        v.innerHTML = `<strong><i data-lucide="check-circle"></i> Perfect!</strong> Selected ingredients sum: ${sum.toFixed(2)}% matches total: ${totalFI}%`;
         v.className='success-message';
         v.style.cssText='display:block;padding:10px;border:2px solid var(--success-color);border-radius:6px;background:rgba(16,185,129,.1)';
       } else {
-        v.innerHTML = `<strong>⚠️ Check totals:</strong> Selected sum: ${sum.toFixed(2)}% | Target: ${totalFI}% | Difference: ${Math.abs(sum-totalFI).toFixed(2)}%`;
+        v.innerHTML = `<strong><i data-lucide="alert-triangle"></i> Check totals:</strong> Selected sum: ${sum.toFixed(2)}% | Target: ${totalFI}% | Difference: ${Math.abs(sum-totalFI).toFixed(2)}%`;
         v.className='error-message';
         v.style.cssText='display:block;padding:10px;border:2px solid var(--error-color);border-radius:6px;background:rgba(239,68,68,.1)';
       }
+      lucide.createIcons();
     });
 
     // Boot
     document.addEventListener('DOMContentLoaded', function(){
       document.getElementById('year').textContent = new Date().getFullYear();
       updateProgress();
+
+      // Initialize lucide icons
+      lucide.createIcons();
 
       // When step5 becomes active, render results
       const observer = new MutationObserver((muts)=>{
